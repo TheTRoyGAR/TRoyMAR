@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRoyMAR — Agent Command Centre</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-logo">TRoyMAR<span class="tm">™</span></div>
+      <div class="sidebar-sub">Agent Command Centre</div>
+      <nav class="page-nav">
+        <a href="#/overview" class="nav-item" data-page="overview"><span class="nav-icon">▦</span>Overview</a>
+        <a href="#/management" class="nav-item" data-page="management"><span class="nav-icon">◎</span>Management</a>
+        <a href="#/marketing" class="nav-item" data-page="marketing"><span class="nav-icon">◉</span>Marketing</a>
+        <a href="#/sales" class="nav-item" data-page="sales"><span class="nav-icon">◈</span>Sales</a>
+        <a href="#/finance" class="nav-item" data-page="finance"><span class="nav-icon">◆</span>Finance</a>
+        <a href="#/shipping" class="nav-item" data-page="shipping"><span class="nav-icon">⚓</span>Shipping</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-status">
+          <div id="status-dot" class="status-dot" title="System status"></div>
+          <span id="status-label">Checking…</span>
+        </div>
+        <span class="sidebar-ceo">CEO: I. Ertan Govdeli</span>
+        <button type="button" id="sidebar-collapse-btn" class="sidebar-collapse-btn" title="Collapse sidebar">
+          <span id="collapse-icon">‹</span>
+          <span id="collapse-label">Collapse</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="content-wrap">
+      <header>
+        <div class="header-inner">
+          <div class="header-title" id="page-title">Overview</div>
+        </div>
+      </header>
+
+      <main>
+
+        <!-- ═══ OVERVIEW ═══ -->
+        <div class="page" id="page-overview">
+          <section class="kpi-row">
+            <div class="kpi-card"><div class="kpi-value">5</div><div class="kpi-label">Departments</div></div>
+            <div class="kpi-card"><div class="kpi-value">22</div><div class="kpi-label">Active Agents</div></div>
+            <div class="kpi-card"><div class="kpi-value" id="tasks-count">—</div><div class="kpi-label">Tasks Run</div></div>
+            <div class="kpi-card"><div class="kpi-value" id="uptime">Online</div><div class="kpi-label">Agency Status</div></div>
+          </section>
+
+          <section class="task-section">
+            <h2>Recent Tasks — All Departments</h2>
+            <div id="task-list"><p class="empty-state">No tasks yet. Run an agent from any department page.</p></div>
+          </section>
+
+          <section class="task-section">
+            <h2>Shared Memory <span id="memory-count" class="orders-revenue"></span></h2>
+            <p class="dept-note" style="margin-bottom:12px;">What agents have learned and saved — shared across every department automatically.</p>
+            <div id="memory-list"><p class="empty-state">Nothing saved yet. Learnings appear here as agents complete tasks.</p></div>
+          </section>
+        </div>
+
+        <!-- ═══ MANAGEMENT (Orchestrator) ═══ -->
+        <div class="page" id="page-management">
+          <section class="orchestrator-bar">
+            <div class="orch-label">
+              <span class="orch-icon">◎</span>
+              <span>Core Orchestrator — CEO Assistant</span>
+              <span class="orch-sub">DELEGATE · REVIEW · FINAL_QA</span>
+            </div>
+            <div class="orch-actions">
+              <div class="brief-input-wrap">
+                <textarea id="brief-input" class="brief-input" placeholder="Enter a brief… (Ctrl+Enter to run)" rows="4"></textarea>
+              </div>
+              <button class="run-btn orch-btn" id="brief-btn" data-dept="orchestrator" data-task="intake_brief">Run Brief</button>
+            </div>
+          </section>
+          <section class="task-section">
+            <h2>Recent Management Runs</h2>
+            <div id="dept-task-list-orchestrator"><p class="empty-state">No briefs run yet.</p></div>
+          </section>
+        </div>
+
+        <!-- ═══ MARKETING ═══ -->
+        <div class="page" id="page-marketing">
+          <div class="dept-card dept-card-solo" data-dept="marketing">
+            <div class="dept-header"><span class="dept-icon">◉</span><span class="dept-name">Marketing</span></div>
+            <ul class="agent-list">
+              <li class="agent-head">Head of the AI Marketing Department <span class="skill-tags">PORT_CALL_INTEL · CAPABILITY_CONTENT · REPUTATION_AUDIT</span></li>
+              <li>Port Intelligence Analyst</li>
+              <li>Content Creator</li>
+              <li>Industry Relations Manager</li>
+              <li>Reputation &amp; Analytics Reporter</li>
+            </ul>
+            <div class="btn-group">
+              <button class="run-btn" data-dept="marketing" data-task="run_campaign">Run Campaign</button>
+              <button class="run-btn skill-btn" data-dept="marketing" data-task="port_call_intel">Port Call Intel</button>
+              <button class="run-btn skill-btn" data-dept="marketing" data-task="capability_content">Capability Content</button>
+              <button class="run-btn skill-btn" data-dept="marketing" data-task="reputation_audit">Reputation Audit</button>
+            </div>
+          </div>
+          <section class="task-section">
+            <h2>Recent Marketing Runs</h2>
+            <div id="dept-task-list-marketing"><p class="empty-state">No tasks run yet.</p></div>
+          </section>
+        </div>
+
+        <!-- ═══ SALES ═══ -->
+        <div class="page" id="page-sales">
+          <div class="dept-card dept-card-solo" data-dept="sales">
+            <div class="dept-header"><span class="dept-icon">◈</span><span class="dept-name">Sales</span></div>
+            <ul class="agent-list">
+              <li class="agent-head">Head of the AI Sales Department <span class="skill-tags">AGENCY_APPOINTMENT · BROKERAGE · OUTREACH</span></li>
+              <li>Port Call Opportunity Finder</li>
+              <li>Opportunity Qualifier</li>
+              <li>Proposal &amp; Quote Writer</li>
+              <li>Appointment Closer</li>
+            </ul>
+            <div class="btn-group">
+              <button class="run-btn" data-dept="sales" data-task="run_pipeline">Run Pipeline</button>
+              <button class="run-btn skill-btn" data-dept="sales" data-task="agency_appointment">Agency Appointment</button>
+              <button class="run-btn skill-btn" data-dept="sales" data-task="brokerage">Brokerage</button>
+              <button class="run-btn skill-btn" data-dept="sales" data-task="outreach">Outreach</button>
+            </div>
+            <div class="brief-input-wrap" style="margin-top:10px;">
+              <textarea id="opportunity-input" class="brief-input" placeholder="e.g. cruise lines calling at Istanbul next quarter" rows="2"></textarea>
+            </div>
+            <button class="run-btn" id="opportunity-btn" style="margin-top:6px;">Find Opportunities (research + report only, never sends)</button>
+          </div>
+          <section class="task-section">
+            <h2>Recent Sales Runs</h2>
+            <div id="dept-task-list-sales"><p class="empty-state">No tasks run yet.</p></div>
+          </section>
+        </div>
+
+        <!-- ═══ FINANCE ═══ -->
+        <div class="page" id="page-finance">
+          <div class="dept-card dept-card-solo" data-dept="finance">
+            <div class="dept-header"><span class="dept-icon">◆</span><span class="dept-name">Finance</span></div>
+            <ul class="agent-list">
+              <li class="agent-head">Head of the AI Finance Department <span class="skill-tags">DISBURSEMENT_ACCOUNT · BILLING_FLOW · REPORTING</span></li>
+              <li>Disbursement Account Clerk</li>
+              <li>Budget Planner</li>
+              <li>Invoice Manager</li>
+              <li>Cost Optimizer</li>
+            </ul>
+            <div class="btn-group">
+              <button class="run-btn" data-dept="finance" data-task="generate_report">Run Report</button>
+              <button class="run-btn skill-btn" data-dept="finance" data-task="disbursement_account">Disbursement Account</button>
+              <button class="run-btn skill-btn" data-dept="finance" data-task="billing_flow">Billing Flow</button>
+            </div>
+          </div>
+          <section class="task-section">
+            <h2>Recent Finance Runs</h2>
+            <div id="dept-task-list-finance"><p class="empty-state">No tasks run yet.</p></div>
+          </section>
+        </div>
+
+        <!-- ═══ SHIPPING ═══ -->
+        <div class="page" id="page-shipping">
+          <div class="dept-card dept-card-solo" data-dept="shipping">
+            <div class="dept-header"><span class="dept-icon">⚓</span><span class="dept-name">Shipping &amp; Ship Agency Operations</span></div>
+            <ul class="agent-list">
+              <li class="agent-head">Head of Shipping &amp; Ship Agency Operations</li>
+              <li>Port Call Logistics Coordinator</li>
+              <li>Customs &amp; Compliance Specialist</li>
+              <li>Vessel Husbandry Specialist</li>
+              <li>Cargo &amp; Logistics Manager</li>
+              <li>Systems Integrator</li>
+            </ul>
+            <div class="btn-group">
+              <button class="run-btn" data-dept="shipping" data-task="run_task">Run Task</button>
+              <button class="run-btn skill-btn" data-dept="shipping" data-task="sub_agent_network">Sub-Agent Network</button>
+              <button class="run-btn skill-btn" data-dept="shipping" data-task="port_call_logistics">Port Call Logistics</button>
+              <button class="run-btn skill-btn" data-dept="shipping" data-task="husbandry_coordination">Husbandry Coordination</button>
+              <button class="run-btn skill-btn" data-dept="shipping" data-task="cargo_logistics_management">Cargo &amp; Logistics</button>
+            </div>
+          </div>
+          <section class="task-section">
+            <h2>Recent Shipping Runs</h2>
+            <div id="dept-task-list-shipping"><p class="empty-state">No tasks run yet.</p></div>
+          </section>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

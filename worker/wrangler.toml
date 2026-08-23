@@ -1,0 +1,32 @@
+name = "troymar-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+account_id = "7f9d6ab3d14d37e9fc6f4cec7527a94a"
+
+[vars]
+AGENCY_NAME = "TRoy Maritime Agency (TRoyMAR)"
+CEO = "I. Ertan Govdeli"
+WORKER_PUBLIC_URL = "https://api.troymaritime.com"
+# Public hostname of the Cloudflare Tunnel pointing at your local server.py.
+# Leave unset to disable task execution — tasks will just sit at 'queued'.
+BACKEND_URL = "https://backend.troymaritime.com"
+
+# AGENT_API_KEY (checked against the dashboard's Authorization header) and
+# BACKEND_API_KEY (sent to the tunnel as X-Backend-Key, must match the
+# backend's .env BACKEND_API_KEY) are secrets — do NOT put them here:
+#   wrangler secret put AGENT_API_KEY
+#   wrangler secret put BACKEND_API_KEY
+
+[[d1_databases]]
+binding = "DB"
+database_name = "troymar-db"
+database_id = "acc29803-1811-41f1-8ec4-121e7006c951"
+
+[[routes]]
+pattern = "api.troymaritime.com/*"
+zone_name = "troymaritime.com"
+
+# Sweeps tasks stuck at 'running' because the backend crashed/restarted after
+# accepting a job but before calling back to /api/tasks/:id/callback.
+[triggers]
+crons = ["*/10 * * * *"]
