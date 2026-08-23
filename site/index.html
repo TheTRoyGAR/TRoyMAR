@@ -15,6 +15,7 @@
       --border: #16283a;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: "Helvetica Neue", Arial, sans-serif; }
 
     nav {
@@ -31,7 +32,7 @@
     }
     .nav-logo { font-size: 19px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
     .nav-logo sup { font-size: 10px; }
-    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links { display: flex; align-items: center; gap: 26px; }
     .nav-link { color: var(--muted); font-size: 14px; text-decoration: none; }
     .nav-link:hover { color: var(--text); }
     .nav-cta {
@@ -46,9 +47,20 @@
 
     .hero {
       max-width: 900px;
-      margin: 100px auto 80px;
+      margin: 100px auto 70px;
       padding: 0 48px;
       text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(circle, rgba(47,182,201,0.15) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
     }
     .hero .eyebrow { color: var(--accent2); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 18px; }
     .hero h1 { font-size: 48px; font-weight: 700; line-height: 1.15; letter-spacing: -0.5px; }
@@ -61,10 +73,12 @@
       color: #04141c;
       padding: 14px 30px;
       border-radius: 4px;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 15px;
       text-decoration: none;
+      transition: transform 0.2s;
     }
+    .cta:hover { transform: translateY(-2px); }
     .cta-secondary {
       display: inline-block;
       border: 1px solid var(--border);
@@ -77,77 +91,92 @@
     }
     .cta-secondary:hover { border-color: var(--accent); }
 
-    .pillars {
-      max-width: 1100px;
-      margin: 100px auto;
-      padding: 0 48px;
+    section { padding: 0 48px; }
+    .section-label { font-size: 13px; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.12em; text-align: center; margin-bottom: 14px; font-weight: 600; }
+    .section-title { font-size: 30px; font-weight: 700; text-align: center; margin-bottom: 44px; letter-spacing: -0.5px; }
+
+    /* Proof strip */
+    .proof { max-width: 900px; margin: 0 auto 90px; }
+    .proof-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+      background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
     }
-    .section-label { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; text-align: center; margin-bottom: 40px; }
+    .proof-cell { background: var(--bg2); padding: 26px 14px; text-align: center; }
+    .proof-cell .num { font-size: 28px; font-weight: 800; color: var(--accent); }
+    .proof-cell .lbl { font-size: 11px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .pillars { max-width: 1100px; margin: 0 auto 90px; }
     .pillar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .pillar {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 32px 28px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 32px 28px;
+      transition: border-color 0.2s, transform 0.2s;
     }
+    .pillar:hover { border-color: rgba(47,182,201,0.4); transform: translateY(-3px); }
     .pillar .icon { font-size: 26px; color: var(--accent); margin-bottom: 16px; }
     .pillar h3 { font-size: 18px; margin-bottom: 12px; }
     .pillar p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 
-    .tracker {
-      max-width: 900px;
-      margin: 100px auto;
-      padding: 40px 48px;
-      text-align: center;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
+    /* Services with real skill tags */
+    .services { max-width: 1080px; margin: 0 auto 90px; }
+    .service-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .service-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 26px;
+      transition: border-color 0.2s, transform 0.2s;
     }
-    .tracker h2 { font-size: 24px; margin-bottom: 12px; }
-    .tracker p { color: var(--muted); font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
+    .service-card:hover { border-color: rgba(47,182,201,0.4); transform: translateY(-3px); }
+    .service-card .icon { font-size: 20px; color: var(--accent); margin-bottom: 12px; }
+    .service-card h3 { font-size: 17px; margin-bottom: 8px; }
+    .service-card p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .skill-tag {
+      font-size: 10px; color: var(--accent); background: rgba(47,182,201,0.08);
+      border: 1px solid rgba(47,182,201,0.28); border-radius: 4px; padding: 4px 8px; letter-spacing: 0.02em;
+    }
+
+    .tracker {
+      max-width: 900px; margin: 0 auto 90px; padding: 40px 48px; text-align: center;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .tracker h2 { font-size: 22px; margin-bottom: 12px; }
+    .tracker p { color: var(--muted); font-size: 15px; margin-bottom: 22px; line-height: 1.6; }
     .tracker small { display: block; margin-top: 16px; color: var(--muted); font-size: 12px; }
 
-    .depts {
-      max-width: 1000px;
-      margin: 100px auto;
-      padding: 0 48px;
+    /* How it works */
+    .how { max-width: 900px; margin: 0 auto 90px; }
+    .how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .how-step { text-align: center; }
+    .how-step .step-num {
+      width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--accent);
+      color: var(--accent); display: flex; align-items: center; justify-content: center;
+      font-weight: 700; margin: 0 auto 14px; font-size: 14px;
     }
-    .dept-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .dept-box {
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 22px 16px;
-      text-align: center;
-    }
-    .dept-box .icon { font-size: 22px; margin-bottom: 8px; color: var(--accent); }
-    .dept-box .name { font-size: 13px; font-weight: 600; }
-    .dept-box .count { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .how-step h4 { font-size: 15px; margin-bottom: 8px; }
+    .how-step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-    .anchors {
-      max-width: 700px;
-      margin: 100px auto;
-      padding: 0 48px;
-      text-align: center;
-    }
+    .anchors { max-width: 700px; margin: 0 auto 60px; text-align: center; }
     .anchors p { color: var(--muted); font-size: 15px; line-height: 1.7; }
 
-    footer {
-      text-align: center;
-      padding: 40px;
-      color: var(--muted);
-      font-size: 12px;
-      border-top: 1px solid var(--border);
-      margin-top: 80px;
+    .group { max-width: 700px; margin: 0 auto 90px; text-align: center; }
+    .group p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .group-links { display: flex; gap: 14px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+    .group-links a {
+      font-size: 13px; color: var(--text); text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 20px; transition: border-color 0.2s;
     }
+    .group-links a:hover { border-color: var(--accent); }
+
+    footer { text-align: center; padding: 40px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); }
     footer a { color: var(--muted); }
 
     @media (max-width: 800px) {
       .hero h1 { font-size: 32px; }
+      .proof-grid { grid-template-columns: repeat(2, 1fr); }
       .pillar-grid { grid-template-columns: 1fr; }
-      .dept-grid { grid-template-columns: repeat(2, 1fr); }
+      .service-grid { grid-template-columns: 1fr; }
+      .how-steps { grid-template-columns: 1fr; }
       nav { padding: 16px 20px; }
-      .nav-links { gap: 16px; }
-      .hero, .pillars, .depts, .anchors { padding: 0 24px; }
+      .nav-links { gap: 14px; }
+      section, .hero { padding: 0 22px; }
     }
   </style>
 </head>
@@ -156,6 +185,7 @@
     <div class="nav-logo">TRoyMAR<sup>™</sup></div>
     <div class="nav-links">
       <a class="nav-link" href="#services">Services</a>
+      <a class="nav-link" href="#how">How It Works</a>
       <a class="nav-link" href="https://www.marinetraffic.com/" target="_blank" rel="noopener">Track Vessels</a>
       <a class="nav-cta" href="mailto:troymaritimeagency@gmail.com">Get in Touch →</a>
     </div>
@@ -165,9 +195,9 @@
     <div class="eyebrow">TRoy Maritime Agency™</div>
     <h1>Ship agency, husbandry<br />and <span>marine logistics</span>,<br />worldwide.</h1>
     <p>
-      TRoyMAR™ arranges real port calls, husbandry, and spares/repair coordination
-      for ship owners, operators, and charterers — anchored at Darwin and Istanbul,
-      built to serve ports worldwide.
+      TRoyMAR™ acts as Hub Agent for ship owners, operators, and charterers — coordinating
+      real local sub-agents, husbandry, and spares/repair support at every port call.
+      Anchored at Darwin and Istanbul, built to serve ports worldwide.
     </p>
     <div class="cta-row">
       <a class="cta" href="mailto:troymaritimeagency@gmail.com">Get in Touch →</a>
@@ -175,7 +205,16 @@
     </div>
   </section>
 
-  <section class="pillars" id="services">
+  <section class="proof">
+    <div class="proof-grid">
+      <div class="proof-cell"><div class="num">4</div><div class="lbl">Departments</div></div>
+      <div class="proof-cell"><div class="num">21</div><div class="lbl">Real Agents</div></div>
+      <div class="proof-cell"><div class="num">2</div><div class="lbl">Home Ports</div></div>
+      <div class="proof-cell"><div class="num">1</div><div class="lbl">CEO, Real Ship-Agent Background</div></div>
+    </div>
+  </section>
+
+  <section class="pillars">
     <div class="section-label">What We Do</div>
     <div class="pillar-grid">
       <div class="pillar">
@@ -196,6 +235,53 @@
     </div>
   </section>
 
+  <section class="services" id="services">
+    <div class="section-label">Real Agents, Real Departments</div>
+    <h2 class="section-title">Every department, real work</h2>
+    <div class="service-grid">
+      <div class="service-card">
+        <div class="icon">◉</div>
+        <h3>Marketing</h3>
+        <p>Real port-call intelligence — confirmed vessel schedules, not guesses — plus honest capability content and reputation checks.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">PORT_CALL_INTEL</span>
+          <span class="skill-tag">CAPABILITY_CONTENT</span>
+          <span class="skill-tag">REPUTATION_AUDIT</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="icon">◈</div>
+        <h3>Sales</h3>
+        <p>Winning real Hub Agent appointments, chartering and sale &amp; purchase brokerage, and outreach grounded in confirmed facts.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">AGENCY_APPOINTMENT</span>
+          <span class="skill-tag">BROKERAGE</span>
+          <span class="skill-tag">OUTREACH</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="icon">◆</div>
+        <h3>Finance</h3>
+        <p>Real, itemized Disbursement Accounts for every port call, automated billing, and reporting you can actually trust.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">DISBURSEMENT_ACCOUNT</span>
+          <span class="skill-tag">BILLING_FLOW</span>
+          <span class="skill-tag">REPORTING</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="icon">⚙</div>
+        <h3>Shipping &amp; Ship Agency Operations</h3>
+        <p>Real sub-agent network coordination, port call logistics, and husbandry — the physical, on-the-ground work of every call.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">SUB_AGENT_NETWORK</span>
+          <span class="skill-tag">PORT_CALL_LOGISTICS</span>
+          <span class="skill-tag">HUSBANDRY_COORDINATION</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="tracker">
     <h2>Track vessels live</h2>
     <p>Real-time vessel positions worldwide, powered by MarineTraffic's public AIS data.</p>
@@ -203,28 +289,24 @@
     <small>Opens MarineTraffic.com in a new tab — real, live AIS vessel data.</small>
   </section>
 
-  <section class="depts">
-    <div class="section-label">4 Departments · 21 Agents</div>
-    <div class="dept-grid">
-      <div class="dept-box">
-        <div class="icon">⚙</div>
-        <div class="name">Operations</div>
-        <div class="count">5 agents</div>
+  <section class="how" id="how">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">Hub Agent, done properly</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <h4>Confirm the call</h4>
+        <p>Real, verified vessel schedule and port details — never assumed.</p>
       </div>
-      <div class="dept-box">
-        <div class="icon">◈</div>
-        <div class="name">Sales</div>
-        <div class="count">5 agents</div>
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <h4>We coordinate the network</h4>
+        <p>As Hub Agent, we manage real local sub-agents, husbandry, and logistics on your behalf.</p>
       </div>
-      <div class="dept-box">
-        <div class="icon">◉</div>
-        <div class="name">Marketing</div>
-        <div class="count">5 agents</div>
-      </div>
-      <div class="dept-box">
-        <div class="icon">◆</div>
-        <div class="name">Finance</div>
-        <div class="count">5 agents</div>
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <h4>You get one clean account</h4>
+        <p>A single, itemized Disbursement Account — no surprises, no guesswork.</p>
       </div>
     </div>
   </section>
@@ -235,6 +317,18 @@
       Anchored at <strong>Darwin, Northern Territory</strong> and <strong>Istanbul, Turkey</strong> —
       growing to serve ports worldwide, because ships don't stay in one place, and neither do we.
     </p>
+  </section>
+
+  <section class="group">
+    <div class="section-label">Part Of Something Bigger</div>
+    <p>
+      TRoyMAR™ is part of TRoy Group™ — real companies built the same way. TRoyGO's cruise-line
+      relationships and TRoyMAR's port agency work feed each other directly.
+    </p>
+    <div class="group-links">
+      <a href="https://troyaiagent.com" target="_blank" rel="noopener">TRoyAI™ →</a>
+      <a href="https://troytravelagency.com" target="_blank" rel="noopener">TRoy Travel Agency™ →</a>
+    </div>
   </section>
 
   <footer>
