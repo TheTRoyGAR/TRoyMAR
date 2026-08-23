@@ -274,6 +274,14 @@ def operations_tool_integration(request: TaskRequest) -> TaskResponse:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/operations/cargo-logistics-management", response_model=TaskResponse)
+def operations_cargo_logistics_management(request: TaskRequest) -> TaskResponse:
+    try:
+        result = agency.shipping.cargo_logistics_management(request.brief)
+        return TaskResponse(task_id=request.task_id, status="completed", result=result)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ── Helper function ──
 
 def route_and_execute(department: str, skill: str, brief: str) -> str:
@@ -290,6 +298,7 @@ def route_and_execute(department: str, skill: str, brief: str) -> str:
             "port_call_logistics": agency.shipping.port_call_logistics,
             "husbandry_coordination": agency.shipping.husbandry_coordination,
             "tool_integration": agency.shipping.tool_integration,
+            "cargo_logistics_management": agency.shipping.cargo_logistics_management,
             "run_task": agency.shipping.run_task,
         },
         "marketing": {

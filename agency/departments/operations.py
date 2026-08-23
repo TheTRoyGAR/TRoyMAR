@@ -5,7 +5,7 @@ from agency.tools import search, scrape, write, read_file, list_dir
 
 
 class ShippingDepartment:
-    """Shipping & Ship Agency Operations Department — 1 head + 4 specialists. Skills: SUB_AGENT_NETWORK, PORT_CALL_LOGISTICS, HUSBANDRY_COORDINATION, TOOL_INTEGRATION."""
+    """Shipping & Ship Agency Operations Department — 1 head + 5 specialists. Skills: SUB_AGENT_NETWORK, PORT_CALL_LOGISTICS, HUSBANDRY_COORDINATION, TOOL_INTEGRATION, CARGO_LOGISTICS_MANAGEMENT."""
 
     def __init__(self):
         llm = get_llm("sonnet")
@@ -38,7 +38,10 @@ class ShippingDepartment:
                 "3. HUSBANDRY_COORDINATION — Plan how to source real spare parts and arrange "
                 "repairs (main engine, plumbing, or other vessel needs) through real suppliers.\n"
                 "4. TOOL_INTEGRATION — Determine which real tools/APIs TRoyMAR's own systems need "
-                "(e.g. a public ship-tracking link, port authority notices, customs systems).\n\n"
+                "(e.g. a public ship-tracking link, port authority notices, customs systems).\n"
+                "5. CARGO_LOGISTICS_MANAGEMENT — Oversee the broader supply chain around a "
+                "shipment: shippers, forwarders, carriers, multi-leg routing, and customs — the "
+                "part of maritime logistics beyond the single port call.\n\n"
                 "Never guess a real operational detail — a wrong berth time or missed customs step "
                 "is a real, costly problem for a real ship."
             ),
@@ -84,6 +87,36 @@ class ShippingDepartment:
             ),
             llm=llm,
             tools=[search],
+            verbose=False,
+        )
+
+        self.cargo_logistics_manager = Agent(
+            role="Cargo & Logistics Manager",
+            goal=(
+                "Manage the broader maritime supply chain around a shipment — connecting "
+                "shippers, freight forwarders, and carriers, coordinating multi-leg cargo "
+                "movement, and tracking real customs/compliance requirements — the part of "
+                "maritime logistics that goes beyond a single vessel's single port call."
+            ),
+            backstory=(
+                "You are the Cargo & Logistics Manager at TRoy Maritime Agency (TRoyMAR). Real "
+                "maritime logistics is the planning, implementation, and control of goods moving "
+                "by sea — cargo handling, freight forwarding, supply chain coordination, customs "
+                "clearance, and risk management across the full movement of cargo, not just the "
+                "port call of the ship carrying it. Roughly 80% of world trade by volume moves by "
+                "sea, and the businesses that succeed in this industry are the ones that can "
+                "actually manage that whole chain, not just service one ship in one port.\n\n"
+                "Your specific skill:\n"
+                "CARGO_LOGISTICS_MANAGEMENT — For a given cargo movement brief, identify the real "
+                "shippers/forwarders/carriers involved or that would need to be, map the real "
+                "multi-leg route the cargo has to take, flag the real customs/compliance "
+                "checkpoints along the way, and note realistic freight-rate considerations. Never "
+                "invent a specific real company, rate, or regulation you haven't actually "
+                "confirmed — if something can't be verified, say so explicitly rather than "
+                "guessing."
+            ),
+            llm=llm,
+            tools=[search, scrape],
             verbose=False,
         )
 
@@ -245,6 +278,45 @@ class ShippingDepartment:
             f"Operations TOOL_INTEGRATION for '{integration_brief}':\n{result}",
             scope="/dept/operations/tool_integration",
             categories=["shipping", "tool_integration"],
+        )
+        return result
+
+    # ── SKILL: CARGO_LOGISTICS_MANAGEMENT ─────────────────────────────────────────
+
+    def cargo_logistics_management(self, brief: str) -> str:
+        task = Task(
+            description=(
+                f"{recall_context(brief)}"
+                f"CARGO_LOGISTICS_MANAGEMENT: Plan the real broader supply-chain management for: "
+                f"{brief}\n\n"
+                "Identify the real shippers/forwarders/carriers involved or that would need to be "
+                "engaged, map the real multi-leg route the cargo has to travel (not just the one "
+                "port call), flag the real customs/compliance checkpoints along that route, and "
+                "note realistic freight-rate considerations. If a specific company, rate, or "
+                "regulation can't be verified, say so explicitly rather than inventing one."
+            ),
+            expected_output=(
+                "## Cargo & Logistics Management Plan\n"
+                "**Parties Involved** — real shippers/forwarders/carriers, confirmed or flagged as unconfirmed\n"
+                "**Route** — the full multi-leg movement, not just one port call\n"
+                "**Customs/Compliance Checkpoints** — where along the route\n"
+                "**Freight-Rate Considerations** — realistic factors, not invented numbers\n"
+                "**Confidence Note** — explicitly state anything that couldn't be verified"
+            ),
+            agent=self.cargo_logistics_manager,
+        )
+        crew = Crew(
+            agents=[self.cargo_logistics_manager],
+            tasks=[task],
+            process=Process.sequential,
+            memory=shared_memory,
+            verbose=False,
+        )
+        result = str(crew.kickoff())
+        remember(
+            f"Operations CARGO_LOGISTICS_MANAGEMENT for '{brief}':\n{result}",
+            scope="/dept/operations/cargo_logistics_management",
+            categories=["shipping", "cargo_logistics"],
         )
         return result
 
