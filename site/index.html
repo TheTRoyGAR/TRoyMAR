@@ -124,7 +124,10 @@
     .services { max-width: 1080px; margin: 0 auto 90px; }
     .service-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
     .service-card {
-      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 26px;
+      background:
+        linear-gradient(160deg, rgba(7,16,25,0.94), rgba(7,16,25,0.88)),
+        var(--card-img) center/cover no-repeat, var(--bg2);
+      border: 1px solid var(--border); border-radius: 10px; padding: 26px;
       transition: border-color 0.2s, transform 0.2s;
     }
     .service-card:hover { border-color: rgba(47,182,201,0.4); transform: translateY(-3px); }
@@ -243,7 +246,7 @@
     <div class="section-label">Real Agents, Real Departments</div>
     <h2 class="section-title">Every department, real work</h2>
     <div class="service-grid">
-      <div class="service-card">
+      <div class="service-card" style="--card-img: url('https://images.unsplash.com/photo-1670121180530-cfcba4438038?auto=format&fit=crop&w=800&q=60');">
         <div class="icon">◉</div>
         <h3>Marketing</h3>
         <p>Real port-call intelligence — confirmed vessel schedules, not guesses — plus honest capability content and reputation checks.</p>
@@ -253,7 +256,7 @@
           <span class="skill-tag">REPUTATION_AUDIT</span>
         </div>
       </div>
-      <div class="service-card">
+      <div class="service-card" style="--card-img: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=60');">
         <div class="icon">◈</div>
         <h3>Sales</h3>
         <p>Winning real Hub Agent appointments, chartering and sale &amp; purchase brokerage, and outreach grounded in confirmed facts.</p>
@@ -263,7 +266,7 @@
           <span class="skill-tag">OUTREACH</span>
         </div>
       </div>
-      <div class="service-card">
+      <div class="service-card" style="--card-img: url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=60');">
         <div class="icon">◆</div>
         <h3>Finance</h3>
         <p>Real, itemized Disbursement Accounts for every port call, automated billing, and reporting you can actually trust.</p>
@@ -273,7 +276,7 @@
           <span class="skill-tag">REPORTING</span>
         </div>
       </div>
-      <div class="service-card">
+      <div class="service-card" style="--card-img: url('https://images.unsplash.com/photo-1634638022845-1ab614a94128?auto=format&fit=crop&w=800&q=60');">
         <div class="icon">⚙</div>
         <h3>Shipping &amp; Ship Agency Operations</h3>
         <p>Real sub-agent network coordination, port call logistics, husbandry, and the broader cargo &amp; logistics management beyond the port call itself.</p>
@@ -284,7 +287,7 @@
           <span class="skill-tag">CARGO_LOGISTICS_MANAGEMENT</span>
         </div>
       </div>
-      <div class="service-card">
+      <div class="service-card" style="--card-img: url('https://images.unsplash.com/photo-1742405469946-c004ec8a32f0?auto=format&fit=crop&w=800&q=60');">
         <div class="icon">◎</div>
         <h3>Management</h3>
         <p>The CEO Assistant — intakes every brief, delegates it to the right department, reviews the output, and signs off before anything ships.</p>
