@@ -108,7 +108,11 @@
     .pillars { max-width: 1100px; margin: 0 auto 90px; }
     .pillar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .pillar {
-      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 32px 28px;
+      position: relative;
+      background:
+        linear-gradient(160deg, rgba(7,16,25,0.94), rgba(7,16,25,0.86)),
+        var(--pillar-img) center/cover no-repeat, var(--bg2);
+      border: 1px solid var(--border); border-radius: 8px; padding: 32px 28px;
       transition: border-color 0.2s, transform 0.2s;
     }
     .pillar:hover { border-color: rgba(47,182,201,0.4); transform: translateY(-3px); }
@@ -217,17 +221,17 @@
   <section class="pillars">
     <div class="section-label">What We Do</div>
     <div class="pillar-grid">
-      <div class="pillar">
+      <div class="pillar" style="--pillar-img: url('https://images.unsplash.com/photo-1709454972756-021ee178007b?auto=format&fit=crop&w=800&q=60');">
         <div class="icon">⚓</div>
         <h3>Ship Agency</h3>
         <p>Local port agency and husbandry services — berth arrangement, pilotage, customs and immigration clearance, and crew/master needs handled at every port call.</p>
       </div>
-      <div class="pillar">
+      <div class="pillar" style="--pillar-img: url('https://images.unsplash.com/photo-1703174359827-3b6cd11aef43?auto=format&fit=crop&w=800&q=60');">
         <div class="icon">🔧</div>
         <h3>Chandlery & Repairs</h3>
         <p>Sourcing real spare parts and coordinating repairs — engine, plumbing, or any other vessel need — through real, checked suppliers, arranged fast.</p>
       </div>
-      <div class="pillar">
+      <div class="pillar" style="--pillar-img: url('https://images.unsplash.com/photo-1606185540834-d6e7483ee1a4?auto=format&fit=crop&w=800&q=60');">
         <div class="icon">🌐</div>
         <h3>Cargo &amp; Logistics Management</h3>
         <p>Real supply-chain coordination beyond the port call — connecting shippers, forwarders, and carriers, mapping the full multi-leg cargo route, and flagging customs checkpoints along the way.</p>
