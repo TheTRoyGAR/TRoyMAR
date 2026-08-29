@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TRoy Maritime Agency™ — Ship Agency, Logistics & Marine Services</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <style>
     :root {
       --bg: #071019;
@@ -30,7 +31,8 @@
       backdrop-filter: blur(6px);
       z-index: 10;
     }
-    .nav-logo { font-size: 19px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
+    .nav-logo img { width: 32px; height: 32px; border-radius: 50%; -webkit-user-drag: none; user-select: none; }
     .nav-logo sup { font-size: 10px; }
     .nav-links { display: flex; align-items: center; gap: 26px; }
     .nav-link { color: var(--muted); font-size: 14px; text-decoration: none; }
@@ -204,7 +206,7 @@
 </head>
 <body>
   <nav>
-    <div class="nav-logo">TRoyMAR<sup>™</sup></div>
+    <div class="nav-logo"><img src="/images/logo.png" alt="TRoyMAR™" draggable="false" />TRoyMAR<sup>™</sup></div>
     <div class="nav-links">
       <a class="nav-link" href="#services">Services</a>
       <a class="nav-link" href="#how">How It Works</a>
@@ -371,6 +373,7 @@
   </section>
 
   <footer>
+    <img src="/images/logo.png" alt="TRoyMAR™" draggable="false" style="width:28px;height:28px;border-radius:50%;vertical-align:middle;margin-right:8px;-webkit-user-drag:none;user-select:none;" />
     TRoy Maritime Agency™ (TRoyMAR™) · <a href="mailto:troymaritimeagency@gmail.com">troymaritimeagency@gmail.com</a><br />
     CEO: I. Ertan Govdeli · Part of TRoy Group™ · ABN 30 302 098 137
   </footer>
