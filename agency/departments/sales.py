@@ -49,7 +49,10 @@ class SalesDepartment:
                 "4. OBJECTION_HANDLER — Handle real objections (e.g. 'we already have an agent at "
                 "this port', 'we only use our regular network') with honest, credible responses.\n\n"
                 "Coordinate with the Marketing Department's port-call intelligence to target real, "
-                "confirmed opportunities — never approach a prospect based on invented information."
+                "confirmed opportunities — never approach a prospect based on invented information.\n\n"
+                "Operating rules: a prospect line/operator is a lead until a real signed agency "
+                "agreement exists — never advance it further on your own. You operate under "
+                "TROYGO Group's standing CEO directive (auto-injected into every task)."
             ),
             llm=llm,
             tools=[write],

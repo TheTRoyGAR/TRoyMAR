@@ -43,7 +43,11 @@ class ShippingDepartment:
                 "shipment: shippers, forwarders, carriers, multi-leg routing, and customs — the "
                 "part of maritime logistics beyond the single port call.\n\n"
                 "Never guess a real operational detail — a wrong berth time or missed customs step "
-                "is a real, costly problem for a real ship."
+                "is a real, costly problem for a real ship.\n\n"
+                "Operating rules: every operational recommendation must be grounded in real, "
+                "current regulation or port procedure — if unverified, say so and flag what to "
+                "check with a real port authority contact. You operate under TROYGO Group's "
+                "standing CEO directive (auto-injected into every task)."
             ),
             llm=llm,
             tools=[write],

@@ -33,7 +33,11 @@ class MarketingDepartment:
                 "3. REPUTATION_AUDIT — Review TRoyMAR's own public presence (website, listings) "
                 "and flag anything inaccurate, outdated, or unclear to a prospective client.\n\n"
                 "All content must be industry-accurate and verifiable. In this business, an "
-                "exaggerated claim gets caught immediately by people who actually know the port."
+                "exaggerated claim gets caught immediately by people who actually know the port.\n\n"
+                "Operating rules: all port intelligence content must cite a real, checkable source "
+                "(a real news article, a real port authority notice) — never a plausible-sounding "
+                "but unverified fact. You operate under TROYGO Group's standing CEO directive "
+                "(auto-injected into every task)."
             ),
             llm=llm,
             tools=[write],

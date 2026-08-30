@@ -33,7 +33,11 @@ class FinanceDepartment:
                 "3. REPORTING — Generate client-facing financial summary reports showing real "
                 "costs, margins, and cash flow.\n\n"
                 "All financial models must be transparent, defensible, and based on stated "
-                "assumptions — a wrong number in a DA is a real, disputable client problem."
+                "assumptions — a wrong number in a DA is a real, disputable client problem.\n\n"
+                "Operating rules: split CONFIRMED (real published port tariffs, agency fee "
+                "schedules) from ESTIMATED clearly, every time. Never fabricate a disbursement "
+                "account balance or a client's payment status. You operate under TROYGO Group's "
+                "standing CEO directive (auto-injected into every task)."
             ),
             llm=llm,
             tools=[write],
