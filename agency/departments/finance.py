@@ -8,7 +8,7 @@ class FinanceDepartment:
     """Finance Department — 1 head + 4 specialists. Skills: DISBURSEMENT_ACCOUNT, BILLING_FLOW, REPORTING."""
 
     def __init__(self):
-        llm = get_llm("sonnet")
+        llm = get_llm("haiku")
 
         self.finance_head = Agent(
             role="Head of the AI Finance Department",

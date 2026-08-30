@@ -8,7 +8,7 @@ class ShippingDepartment:
     """Shipping & Ship Agency Operations Department — 1 head + 5 specialists. Skills: SUB_AGENT_NETWORK, PORT_CALL_LOGISTICS, HUSBANDRY_COORDINATION, TOOL_INTEGRATION, CARGO_LOGISTICS_MANAGEMENT."""
 
     def __init__(self):
-        llm = get_llm("sonnet")
+        llm = get_llm("haiku")
 
         self.shipping_head = Agent(
             role="Head of Shipping & Ship Agency Operations",
