@@ -245,6 +245,7 @@ class SalesDepartment:
     def objection_handler(self, objection: str) -> str:
         task = Task(
             description=(
+                f"{recall_context(objection)}"
                 f"OBJECTION_HANDLER: Write an honest, credible response to this real objection: "
                 f"{objection}"
             ),
@@ -270,7 +271,7 @@ class SalesDepartment:
 
     def run_pipeline(self, brief: str) -> str:
         task = Task(
-            description=f"Plan the full sales pipeline for: {brief}. Cover opportunity finding, proposal, and closing steps.",
+            description=f"{recall_context(brief)}Plan the full sales pipeline for: {brief}. Cover opportunity finding, proposal, and closing steps.",
             expected_output="Sales pipeline plan with concrete next steps.",
             agent=self.sales_head,
         )
@@ -293,6 +294,7 @@ class SalesDepartment:
         """Research + report only — never drafts or sends outreach."""
         task = Task(
             description=(
+                f"{recall_context(brief)}"
                 f"FIND_OPPORTUNITIES: Research real agency-appointment opportunities matching: "
                 f"{brief}\n\nOnly include real, confirmed findings with sources. This is research "
                 "and reporting only — do not draft any outreach."

@@ -328,7 +328,7 @@ class ShippingDepartment:
 
     def run_task(self, brief: str) -> str:
         task = Task(
-            description=f"Plan the full operational approach for: {brief}.",
+            description=f"{recall_context(brief)}Plan the full operational approach for: {brief}.",
             expected_output="Operational plan covering logistics, husbandry, and any tooling needed.",
             agent=self.shipping_head,
         )
@@ -349,7 +349,7 @@ class ShippingDepartment:
 
     def daily_briefing(self, context: str = "") -> str:
         task = Task(
-            description=f"Produce a daily operations briefing. Context: {context or 'no specific context provided'}.",
+            description=f"{recall_context(context or 'daily operations briefing')}Produce a daily operations briefing. Context: {context or 'no specific context provided'}.",
             expected_output="Daily briefing: active port calls, pending husbandry needs, any operational risks.",
             agent=self.shipping_head,
         )

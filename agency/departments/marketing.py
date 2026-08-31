@@ -207,7 +207,7 @@ class MarketingDepartment:
 
     def run_campaign(self, brief: str) -> str:
         task = Task(
-            description=f"Plan a full marketing push for: {brief}. Cover port-call intelligence, content, and industry relationship targets.",
+            description=f"{recall_context(brief)}Plan a full marketing push for: {brief}. Cover port-call intelligence, content, and industry relationship targets.",
             expected_output="Marketing plan: intel targets, content pieces, and relationship targets.",
             agent=self.marketing_head,
         )

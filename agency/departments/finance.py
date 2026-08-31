@@ -180,7 +180,7 @@ class FinanceDepartment:
 
     def reporting(self, period: str = "monthly") -> str:
         task_books = Task(
-            description=f"Summarize the {period} financial transactions and categorize income vs expenses.",
+            description=f"{recall_context(period)}Summarize the {period} financial transactions and categorize income vs expenses.",
             expected_output="Categorized summary: revenue streams (agency fees), expense categories, net position.",
             agent=self.budget_planner,
         )
@@ -219,6 +219,7 @@ class FinanceDepartment:
     def generate_report(self, period: str = "monthly") -> str:
         task_report = Task(
             description=(
+                f"{recall_context(period)}"
                 f"Generate a {period} financial report for TRoy Maritime Agency. "
                 "Include: revenue summary (agency fees), expense categories, profit margin, cash flow."
             ),
