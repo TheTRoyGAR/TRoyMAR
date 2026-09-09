@@ -341,12 +341,15 @@
         sandbox="allow-scripts allow-same-origin allow-forms">
       </iframe>
       <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(transparent, var(--bg)); pointer-events: auto;"></div>
-      <div style="position: absolute; bottom: 8px; right: 12px; display: flex; gap: 4px; pointer-events: auto; z-index: 10;">
-        <button id="zoom-out" style="width: 36px; height: 36px; border-radius: 4px; border: 1px solid #2fb6c9; background: rgba(7, 16, 25, 0.85); color: #2fb6c9; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">−</button>
-        <button id="zoom-in" style="width: 36px; height: 36px; border-radius: 4px; border: 1px solid #2fb6c9; background: rgba(7, 16, 25, 0.85); color: #2fb6c9; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">+</button>
-      </div>
     </div>
-    <small style="display: block; margin-top: 12px;">Live AIS data from MarineTraffic — real-time global vessel positions. See all vessels calling at TRoyMAR™ hubs worldwide.</small>
+
+    <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <button id="zoom-in" style="width: 36px; height: 36px; border-radius: 4px; border: 1px solid #2fb6c9; background: rgba(47, 182, 201, 0.1); color: #2fb6c9; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">+</button>
+        <button id="zoom-out" style="width: 36px; height: 36px; border-radius: 4px; border: 1px solid #2fb6c9; background: rgba(47, 182, 201, 0.1); color: #2fb6c9; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">−</button>
+      </div>
+      <small style="color: var(--muted);">Live AIS data from MarineTraffic — real-time global vessel positions. See all vessels calling at TRoyMAR™ hubs worldwide.</small>
+    </div>
 
     <script>
       let currentZoom = 2;
