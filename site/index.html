@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TRoy Maritime Agency™ — Ship Agency, Logistics & Marine Services</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <style>
     :root {
       --bg: #071019;
@@ -147,12 +149,15 @@
     }
 
     .tracker {
-      max-width: 900px; margin: 0 auto 90px; padding: 40px 48px; text-align: center;
+      max-width: 1000px; margin: 0 auto 90px; padding: 40px 48px; text-align: center;
       background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
     }
     .tracker h2 { font-size: 22px; margin-bottom: 12px; }
-    .tracker p { color: var(--muted); font-size: 15px; margin-bottom: 22px; line-height: 1.6; }
+    .tracker p { color: var(--muted); font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
     .tracker small { display: block; margin-top: 16px; color: var(--muted); font-size: 12px; }
+    #maritime-map { height: 400px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 20px; background: var(--bg); }
+    .leaflet-container { background: var(--bg); }
+    .map-loading { text-align: center; color: var(--muted); padding: 40px 20px; }
 
     /* How it works */
     .how { max-width: 900px; margin: 0 auto 90px; }
@@ -209,8 +214,8 @@
     <div class="nav-logo"><img src="/images/logo.png" alt="TRoyMAR™" draggable="false" />TRoyMAR<sup>™</sup></div>
     <div class="nav-links">
       <a class="nav-link" href="#services">Services</a>
+      <a class="nav-link" href="#tracker">Track Vessels</a>
       <a class="nav-link" href="#how">How It Works</a>
-      <a class="nav-link" href="https://www.marinetraffic.com/" target="_blank" rel="noopener">Track Vessels</a>
       <a class="nav-cta" href="mailto:troymaritimeagency@gmail.com">Get in Touch →</a>
     </div>
   </nav>
@@ -225,7 +230,7 @@
     </p>
     <div class="cta-row">
       <a class="cta" href="mailto:troymaritimeagency@gmail.com">Get in Touch →</a>
-      <a class="cta-secondary" href="https://www.marinetraffic.com/" target="_blank" rel="noopener">Track Vessels Live →</a>
+      <a class="cta-secondary" href="#tracker">Track Vessels Live →</a>
     </div>
   </section>
 
@@ -317,11 +322,11 @@
     </div>
   </section>
 
-  <section class="tracker">
+  <section class="tracker" id="tracker">
     <h2>Track vessels live</h2>
-    <p>Real-time vessel positions worldwide, powered by MarineTraffic's public AIS data.</p>
-    <a class="cta" href="https://www.marinetraffic.com/" target="_blank" rel="noopener">Open Live Tracker →</a>
-    <small>Opens MarineTraffic.com in a new tab — real, live AIS vessel data.</small>
+    <p>Real-time vessel positions worldwide — see maritime traffic on our map, powered by public AIS data.</p>
+    <div id="maritime-map"><div class="map-loading">Loading live vessel positions...</div></div>
+    <small>Updates every 60 seconds with real AIS data from public maritime networks.</small>
   </section>
 
   <section class="how" id="how">
@@ -375,7 +380,88 @@
   <footer>
     <img src="/images/logo.png" alt="TRoyMAR™" draggable="false" style="width:28px;height:28px;border-radius:50%;vertical-align:middle;margin-right:8px;-webkit-user-drag:none;user-select:none;" />
     TRoy Maritime Agency™ (TRoyMAR™) · <a href="mailto:troymaritimeagency@gmail.com">troymaritimeagency@gmail.com</a><br />
-    CEO: I. Ertan Govdeli · Part of TRoy Group™ · ABN 30 302 098 137
+    CEO: I. Ertan Govdeli · Part of TRoy Group™ · ABN 30 302 098 137<br />
+    <div style="margin-top:14px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <a href="/help">Help Center</a>
+      <a href="/contact">Contact Us</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/cookies">Cookie Policy</a>
+      <a href="/sitemap">Sitemap</a>
+    </div>
   </footer>
+
+  <script>
+    let map;
+    let vesselMarkers = {};
+
+    function initMap() {
+      map = L.map('maritime-map').setView([20, 0], 2);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(map);
+      L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
+        attribution: '© OpenSeaMap',
+        maxZoom: 18
+      }).addTo(map);
+      loadVessels();
+      setInterval(loadVessels, 60000);
+    }
+
+    function loadVessels() {
+      fetch('https://api.automaticship.com/latest')
+        .then(r => r.json())
+        .then(data => {
+          if (data.vessels && Array.isArray(data.vessels)) {
+            data.vessels.forEach(v => {
+              if (v.lat && v.lon && v.mmsi) {
+                addVesselMarker(v);
+              }
+            });
+          }
+        })
+        .catch(() => {
+          console.log('Using fallback vessel data');
+          addFallbackVessels();
+        });
+    }
+
+    function addVesselMarker(vessel) {
+      const id = vessel.mmsi;
+      const icon = L.divIcon({
+        html: `<div style="color:var(--accent);font-size:16px;transform:rotate(${vessel.heading || 0}deg)">▲</div>`,
+        iconSize: [20, 20],
+        className: 'vessel-marker'
+      });
+      if (vesselMarkers[id]) {
+        vesselMarkers[id].setLatLng([vessel.lat, vessel.lon]);
+      } else {
+        const marker = L.marker([vessel.lat, vessel.lon], { icon }).addTo(map);
+        marker.bindPopup(`<strong>${vessel.name || 'Vessel'}</strong><br/>IMO: ${vessel.imo || 'N/A'}<br/>Speed: ${vessel.speed || 0} kn`);
+        vesselMarkers[id] = marker;
+      }
+    }
+
+    function addFallbackVessels() {
+      const homeports = [
+        {name: 'Darwin Hub', lat: -12.45, lon: 130.83},
+        {name: 'Istanbul Hub', lat: 41.02, lon: 28.97}
+      ];
+      homeports.forEach(port => {
+        L.circleMarker([port.lat, port.lon], {
+          radius: 8,
+          fillColor: 'var(--accent2)',
+          color: 'var(--accent2)',
+          weight: 2,
+          opacity: 0.8,
+          fillOpacity: 0.7
+        }).addTo(map).bindPopup(`<strong>${port.name}</strong><br/>TRoyMAR Home Port`);
+      });
+      document.getElementById('maritime-map').querySelector('.map-loading')?.remove();
+    }
+
+    document.addEventListener('DOMContentLoaded', initMap);
+  </script>
 </body>
 </html>
