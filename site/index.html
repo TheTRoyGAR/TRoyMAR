@@ -341,26 +341,26 @@
         sandbox="allow-scripts allow-same-origin allow-forms">
       </iframe>
       <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(transparent, var(--bg)); pointer-events: auto;"></div>
-    </div>
-
-    <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
-      <div style="display: flex; flex-direction: column; gap: 4px;">
-        <button id="zoom-in" style="width: 36px; height: 36px; border-radius: 4px; border: 1px solid #2fb6c9; background: rgba(47, 182, 201, 0.1); color: #2fb6c9; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">+</button>
-        <button id="zoom-out" style="width: 36px; height: 36px; border-radius: 4px; border: 1px solid #2fb6c9; background: rgba(47, 182, 201, 0.1); color: #2fb6c9; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">−</button>
+      <div style="position: absolute; bottom: 12px; right: 12px; display: flex; flex-direction: column; gap: 0; pointer-events: auto; z-index: 10;">
+        <button id="zoom-in" style="width: 40px; height: 40px; border-radius: 4px 4px 0 0; border: 1px solid #495861; border-bottom: none; background: #3d454f; color: #fff; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">+</button>
+        <div id="zoom-level" style="width: 40px; height: 40px; border-radius: 0; border: 1px solid #495861; border-top: none; border-bottom: none; background: #3d454f; color: #fff; font-size: 14px; font-weight: 600; cursor: default; display: flex; align-items: center; justify-content: center;">2</div>
+        <button id="zoom-out" style="width: 40px; height: 40px; border-radius: 0 0 4px 4px; border: 1px solid #495861; border-top: none; background: #3d454f; color: #fff; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">−</button>
       </div>
-      <small style="color: var(--muted);">Live AIS data from MarineTraffic — real-time global vessel positions. See all vessels calling at TRoyMAR™ hubs worldwide.</small>
     </div>
+    <small style="display: block; margin-top: 12px;">Live AIS data from MarineTraffic — real-time global vessel positions. See all vessels calling at TRoyMAR™ hubs worldwide.</small>
 
     <script>
       let currentZoom = 2;
       const mapEmbed = document.getElementById('maritime-map-embed');
       const zoomInBtn = document.getElementById('zoom-in');
       const zoomOutBtn = document.getElementById('zoom-out');
+      const zoomLevel = document.getElementById('zoom-level');
 
-      function updateMapZoom(zoomLevel) {
+      function updateMapZoom(level) {
         const baseUrl = 'https://www.marinetraffic.com/en/ais/embed/zoom:';
         const urlPart = '/centery:20/centerx:0/maptype:4/shownames:true/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:/remember:false';
-        mapEmbed.src = baseUrl + zoomLevel + urlPart;
+        mapEmbed.src = baseUrl + level + urlPart;
+        zoomLevel.textContent = level;
       }
 
       zoomInBtn.addEventListener('click', () => {
@@ -368,8 +368,6 @@
           currentZoom++;
           updateMapZoom(currentZoom);
         }
-        zoomInBtn.style.opacity = currentZoom >= 8 ? '0.5' : '1';
-        zoomOutBtn.style.opacity = '1';
       });
 
       zoomOutBtn.addEventListener('click', () => {
@@ -377,14 +375,12 @@
           currentZoom--;
           updateMapZoom(currentZoom);
         }
-        zoomOutBtn.style.opacity = currentZoom <= 0 ? '0.5' : '1';
-        zoomInBtn.style.opacity = '1';
       });
 
-      zoomInBtn.addEventListener('mouseover', () => { zoomInBtn.style.backgroundColor = 'rgba(47, 182, 201, 0.2)'; });
-      zoomInBtn.addEventListener('mouseout', () => { zoomInBtn.style.backgroundColor = 'rgba(7, 16, 25, 0.85)'; });
-      zoomOutBtn.addEventListener('mouseover', () => { zoomOutBtn.style.backgroundColor = 'rgba(47, 182, 201, 0.2)'; });
-      zoomOutBtn.addEventListener('mouseout', () => { zoomOutBtn.style.backgroundColor = 'rgba(7, 16, 25, 0.85)'; });
+      zoomInBtn.addEventListener('mouseover', () => { zoomInBtn.style.backgroundColor = '#4a5461'; });
+      zoomInBtn.addEventListener('mouseout', () => { zoomInBtn.style.backgroundColor = '#3d454f'; });
+      zoomOutBtn.addEventListener('mouseover', () => { zoomOutBtn.style.backgroundColor = '#4a5461'; });
+      zoomOutBtn.addEventListener('mouseout', () => { zoomOutBtn.style.backgroundColor = '#3d454f'; });
     </script>
   </section>
 
