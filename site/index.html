@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TRoy Maritime Agency™ — Ship Agency, Logistics & Marine Services</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <style>
     :root {
       --bg: #071019;
@@ -155,9 +153,7 @@
     .tracker h2 { font-size: 22px; margin-bottom: 12px; }
     .tracker p { color: var(--muted); font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
     .tracker small { display: block; margin-top: 16px; color: var(--muted); font-size: 12px; }
-    #maritime-map { height: 400px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 20px; background: var(--bg); }
-    .leaflet-container { background: var(--bg); }
-    .map-loading { text-align: center; color: var(--muted); padding: 40px 20px; }
+    #maritime-map-embed { display: block; margin: 20px 0; }
 
     /* How it works */
     .how { max-width: 900px; margin: 0 auto 90px; }
@@ -324,9 +320,14 @@
 
   <section class="tracker" id="tracker">
     <h2>Track vessels live</h2>
-    <p>Real-time vessel positions worldwide — see maritime traffic on our map, powered by public AIS data.</p>
-    <div id="maritime-map"><div class="map-loading">Loading live vessel positions...</div></div>
-    <small>Updates every 60 seconds with real AIS data from public maritime networks.</small>
+    <p>Real-time vessel positions worldwide — powered by MarineTraffic live AIS data.</p>
+    <iframe id="maritime-map-embed"
+      src="https://www.marinetraffic.com/en/ais/embed/zoom:2/centery:20/centerx:0/maptype:4/shownames:true/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:/remember:false"
+      style="width:100%; height:400px; border:1px solid #16283a; border-radius:6px; background:#071019;"
+      allowfullscreen loading="lazy"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+    </iframe>
+    <small>Live AIS data from MarineTraffic — real-time global vessel positions updated continuously.</small>
   </section>
 
   <section class="how" id="how">
@@ -391,83 +392,7 @@
     </div>
   </footer>
 
-  <script>
-    let map;
-    let vesselMarkers = {};
-
-    function initMap() {
-      map = L.map('maritime-map').setView([20, 0], 2);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19
-      }).addTo(map);
-      L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
-        attribution: '© OpenSeaMap',
-        maxZoom: 18
-      }).addTo(map);
-      loadVessels();
-      setInterval(loadVessels, 60000);
-    }
-
-    function loadVessels() {
-      const liveVessels = [
-        {name: 'Ever Given', lat: 32.35, lon: 32.33, heading: 90, speed: 15, imo: 9811000},
-        {name: 'MSC Gülsün', lat: 37.77, lon: -122.41, heading: 180, speed: 12, imo: 9784354},
-        {name: 'OOCL Hong Kong', lat: 22.31, lon: 114.17, heading: 270, speed: 18, imo: 9516237},
-        {name: 'Maersk Seatrade', lat: 13.73, lon: 100.49, heading: 45, speed: 14, imo: 9642836},
-        {name: 'CMA CGM Antoine', lat: -33.87, lon: 18.42, heading: 135, speed: 16, imo: 9632486},
-        {name: 'TRoyMAR Charter 1', lat: -12.45, lon: 130.83, heading: 0, speed: 0, imo: 1234567},
-        {name: 'Hapag Express', lat: 51.47, lon: 0.0, heading: 180, speed: 20, imo: 9632487},
-        {name: 'ONE Innovation', lat: 34.05, lon: -118.24, heading: 270, speed: 17, imo: 9632488},
-      ];
-
-      liveVessels.forEach(v => {
-        if (v.lat && v.lon) {
-          addVesselMarker(v);
-        }
-      });
-
-      const loadingEl = document.getElementById('maritime-map')?.querySelector('.map-loading');
-      if (loadingEl && vesselMarkers && Object.keys(vesselMarkers).length > 0) {
-        loadingEl.remove();
-      }
-    }
-
-    function addVesselMarker(vessel) {
-      const id = 'vessel_' + vessel.imo;
-      const icon = L.divIcon({
-        html: `<div style="color:#2fb6c9;font-size:18px;font-weight:bold;transform:rotate(${vessel.heading || 0}deg);text-shadow:0 0 2px #071019">▲</div>`,
-        iconSize: [24, 24],
-        className: 'vessel-marker'
-      });
-      if (vesselMarkers[id]) {
-        vesselMarkers[id].setLatLng([vessel.lat, vessel.lon]);
-      } else {
-        const marker = L.marker([vessel.lat, vessel.lon], { icon }).addTo(map);
-        marker.bindPopup(`<strong>${vessel.name}</strong><br/>IMO: ${vessel.imo}<br/>Speed: ${vessel.speed} kn<br/>Heading: ${vessel.heading}°`);
-        vesselMarkers[id] = marker;
-      }
-    }
-
-    function addFallbackVessels() {
-      const homeports = [
-        {name: 'Darwin Hub', lat: -12.45, lon: 130.83},
-        {name: 'Istanbul Hub', lat: 41.02, lon: 28.97}
-      ];
-      homeports.forEach(port => {
-        L.circleMarker([port.lat, port.lon], {
-          radius: 8,
-          fillColor: 'var(--accent2)',
-          color: 'var(--accent2)',
-          weight: 2,
-          opacity: 0.8,
-          fillOpacity: 0.7
-        }).addTo(map).bindPopup(`<strong>${port.name}</strong><br/>TRoyMAR Home Port`);
-      });
-      document.getElementById('maritime-map').querySelector('.map-loading')?.remove();
-    }
-
-    document.addEventListener('DOMContentLoaded', initMap);
-  </script>
+  <!-- MarineTraffic live AIS embedded -->
+  <!-- Real-time vessel tracking with auto-refresh -->
 </body>
 </html>
