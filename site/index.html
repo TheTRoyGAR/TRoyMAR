@@ -417,33 +417,34 @@
         {name: 'Maersk Seatrade', lat: 13.73, lon: 100.49, heading: 45, speed: 14, imo: 9642836},
         {name: 'CMA CGM Antoine', lat: -33.87, lon: 18.42, heading: 135, speed: 16, imo: 9632486},
         {name: 'TRoyMAR Charter 1', lat: -12.45, lon: 130.83, heading: 0, speed: 0, imo: 1234567},
+        {name: 'Hapag Express', lat: 51.47, lon: 0.0, heading: 180, speed: 20, imo: 9632487},
+        {name: 'ONE Innovation', lat: 34.05, lon: -118.24, heading: 270, speed: 17, imo: 9632488},
       ];
 
       liveVessels.forEach(v => {
-        if (v.lat && v.lon && v.imo) {
+        if (v.lat && v.lon) {
           addVesselMarker(v);
         }
       });
 
-      if (vesselMarkers && Object.keys(vesselMarkers).length > 0) {
-        document.getElementById('maritime-map').querySelector('.map-loading')?.remove();
-      } else {
-        addFallbackVessels();
+      const loadingEl = document.getElementById('maritime-map')?.querySelector('.map-loading');
+      if (loadingEl && vesselMarkers && Object.keys(vesselMarkers).length > 0) {
+        loadingEl.remove();
       }
     }
 
     function addVesselMarker(vessel) {
-      const id = vessel.mmsi;
+      const id = 'vessel_' + vessel.imo;
       const icon = L.divIcon({
-        html: `<div style="color:var(--accent);font-size:16px;transform:rotate(${vessel.heading || 0}deg)">▲</div>`,
-        iconSize: [20, 20],
+        html: `<div style="color:#2fb6c9;font-size:18px;font-weight:bold;transform:rotate(${vessel.heading || 0}deg);text-shadow:0 0 2px #071019">▲</div>`,
+        iconSize: [24, 24],
         className: 'vessel-marker'
       });
       if (vesselMarkers[id]) {
         vesselMarkers[id].setLatLng([vessel.lat, vessel.lon]);
       } else {
         const marker = L.marker([vessel.lat, vessel.lon], { icon }).addTo(map);
-        marker.bindPopup(`<strong>${vessel.name || 'Vessel'}</strong><br/>IMO: ${vessel.imo || 'N/A'}<br/>Speed: ${vessel.speed || 0} kn`);
+        marker.bindPopup(`<strong>${vessel.name}</strong><br/>IMO: ${vessel.imo}<br/>Speed: ${vessel.speed} kn<br/>Heading: ${vessel.heading}°`);
         vesselMarkers[id] = marker;
       }
     }
