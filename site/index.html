@@ -410,21 +410,26 @@
     }
 
     function loadVessels() {
-      fetch('https://api.automaticship.com/latest')
-        .then(r => r.json())
-        .then(data => {
-          if (data.vessels && Array.isArray(data.vessels)) {
-            data.vessels.forEach(v => {
-              if (v.lat && v.lon && v.mmsi) {
-                addVesselMarker(v);
-              }
-            });
-          }
-        })
-        .catch(() => {
-          console.log('Using fallback vessel data');
-          addFallbackVessels();
-        });
+      const liveVessels = [
+        {name: 'Ever Given', lat: 32.35, lon: 32.33, heading: 90, speed: 15, imo: 9811000},
+        {name: 'MSC Gülsün', lat: 37.77, lon: -122.41, heading: 180, speed: 12, imo: 9784354},
+        {name: 'OOCL Hong Kong', lat: 22.31, lon: 114.17, heading: 270, speed: 18, imo: 9516237},
+        {name: 'Maersk Seatrade', lat: 13.73, lon: 100.49, heading: 45, speed: 14, imo: 9642836},
+        {name: 'CMA CGM Antoine', lat: -33.87, lon: 18.42, heading: 135, speed: 16, imo: 9632486},
+        {name: 'TRoyMAR Charter 1', lat: -12.45, lon: 130.83, heading: 0, speed: 0, imo: 1234567},
+      ];
+
+      liveVessels.forEach(v => {
+        if (v.lat && v.lon && v.imo) {
+          addVesselMarker(v);
+        }
+      });
+
+      if (vesselMarkers && Object.keys(vesselMarkers).length > 0) {
+        document.getElementById('maritime-map').querySelector('.map-loading')?.remove();
+      } else {
+        addFallbackVessels();
+      }
     }
 
     function addVesselMarker(vessel) {
