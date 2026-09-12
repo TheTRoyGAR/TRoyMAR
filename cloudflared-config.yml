@@ -1,0 +1,7 @@
+tunnel: f7edb2f5-0886-4cdb-a92b-0e46a618378f
+credentials-file: C:\Users\ertan\.cloudflared\f7edb2f5-0886-4cdb-a92b-0e46a618378f.json
+
+ingress:
+  - hostname: backend.troymaritime.com
+    service: http://127.0.0.1:8100
+  - service: http_status:404
