@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TRoy Maritime Agency™ — Our Story</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<style>
+  :root {
+    --bg: #071019; --bg2: #0c1c2b; --accent: #2fb6c9; --accent2: #e8b23d;
+    --text: #e8eef2; --muted: #7a90a1; --border: #16283a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: Georgia, "Iowan Old Style", serif; font-weight: 400; text-wrap: balance; }
+  .mono { font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+  a { color: var(--accent); }
+
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 22px 48px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(7,16,25,0.92); backdrop-filter: blur(6px); z-index: 10; }
+  .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: var(--accent); text-decoration: none; }
+  .nav-logo img { width: 28px; height: 28px; border-radius: 50%; }
+
+  section { max-width: 900px; margin: 0 auto; padding: 90px 32px; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: ui-monospace, monospace; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); margin-bottom: 16px; }
+  p { line-height: 1.7; }
+  .lede { font-size: 17px; color: var(--muted); max-width: 640px; }
+
+  .hero { padding-top: 110px; padding-bottom: 70px; }
+  .hero h1 { font-size: clamp(34px, 5vw, 54px); line-height: 1.1; max-width: 780px; }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero .sub { margin-top: 22px; font-size: 17px; color: var(--muted); max-width: 560px; }
+
+  .timeline { margin-top: 36px; border-left: 1px solid var(--border); padding-left: 30px; display: flex; flex-direction: column; gap: 30px; }
+  .tl-item { position: relative; }
+  .tl-item::before { content: ""; position: absolute; left: -35px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--accent); }
+  .tl-year { font-family: ui-monospace, monospace; font-size: 12.5px; color: var(--accent); margin-bottom: 5px; }
+  .tl-item h3 { font-size: 18px; margin-bottom: 6px; }
+  .tl-item p { font-size: 14.5px; color: var(--muted); }
+
+  .dept-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 32px; }
+  .dept-card { border: 1px solid var(--border); background: var(--bg2); border-radius: 8px; padding: 16px 12px; text-align: center; }
+  .dept-card .icon { color: var(--accent); font-size: 17px; margin-bottom: 8px; display: block; }
+  .dept-card .name { font-size: 12.5px; font-weight: 600; }
+  .dept-card .n { font-size: 10.5px; color: var(--muted); margin-top: 3px; }
+
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 32px; }
+  .stat-cell { background: var(--bg2); padding: 20px 16px; }
+  .stat-cell .num { font-family: ui-monospace, monospace; font-size: 27px; color: var(--accent); }
+  .stat-cell .label { font-size: 10.5px; color: var(--muted); margin-top: 5px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .honest-box { margin-top: 32px; border: 1px solid rgba(232,178,61,0.35); background: rgba(232,178,61,0.08); border-radius: 8px; padding: 20px 24px; }
+  .honest-box .eyebrow { margin-bottom: 8px; color: var(--accent2); }
+  .honest-box p { font-size: 14.5px; color: var(--text); }
+  .honest-box p + p { margin-top: 8px; color: var(--muted); font-size: 13.5px; }
+
+  .closing { text-align: left; border-bottom: none; }
+  .closing h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.15; }
+  .closing .sign { margin-top: 36px; font-family: Georgia, serif; font-size: 16px; }
+  .closing .contact { margin-top: 28px; font-size: 13px; color: var(--muted); line-height: 2; }
+  .cta { display: inline-block; margin-top: 28px; background: var(--accent); color: #071019; padding: 12px 28px; border-radius: 4px; font-weight: 700; font-size: 14px; text-decoration: none; }
+
+  .fade-in { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.shown { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .fade-in { transition: none; opacity: 1; transform: none; } }
+
+  @media (max-width: 700px) {
+    section { padding: 56px 24px; }
+    nav { padding: 16px 24px; }
+    .dept-grid { grid-template-columns: repeat(2, 1fr); }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo"><img src="/images/logo.png" alt="" />TRoy Maritime<sup>™</sup></a>
+    <a href="/" style="color: var(--muted); font-size: 14px; text-decoration: none;">← Home</a>
+  </nav>
+
+  <section class="hero">
+    <div class="eyebrow">Our Story</div>
+    <h1>Twenty-five years at sea and on the docks, now run by <em>AI agents</em>.</h1>
+    <p class="sub">Prepared by the founder — one owner, four industries, two countries, twenty-five years.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">The founder</div>
+    <div class="timeline">
+      <div class="tl-item fade-in">
+        <div class="tl-year">1998 — Turkey</div>
+        <h3>Troy Travel Agency &amp; Troy Shipping Agency</h3>
+        <p>Founded together as part of a group of companies — the first time running maritime/shipping operations as owner-operator, not employee.</p>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-year">2011 — Australia</div>
+        <h3>Relocation to Darwin, NT</h3>
+        <p>Moved to Australia and restarted, close to one of the country's key northern ports.</p>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-year">2022–2023</div>
+        <h3>Small-Business Mentorship Program</h3>
+        <p>Awarded a three-year free membership with a local small-business support program.</p>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-year">2026 — Today</div>
+        <h3>TRoy Maritime Agency™</h3>
+        <p>Same owner, same instinct to run every part of the business personally — now applied through AI agents, using the same template proven first at TRoyAI.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The build — TRoyMAR™</div>
+    <h2 style="font-size: clamp(24px,3.4vw,32px); margin-bottom: 14px;">A real maritime agency, run entirely by AI agents.</h2>
+    <p class="lede">A Hub Agent (General Agent) model for ship agency, husbandry, and cargo logistics. Five departments, twenty-two agents, live vessel tracking, and a genuine cargo &amp; logistics management skill grounded in real maritime-industry research — not just a port-call service.</p>
+
+    <div class="dept-grid">
+      <div class="dept-card fade-in"><span class="icon">◉</span><div class="name">Marketing</div><div class="n">5 agents</div></div>
+      <div class="dept-card fade-in"><span class="icon">◈</span><div class="name">Sales</div><div class="n">5 agents</div></div>
+      <div class="dept-card fade-in"><span class="icon">◆</span><div class="name">Finance</div><div class="n">5 agents</div></div>
+      <div class="dept-card fade-in"><span class="icon">⚓</span><div class="name">Shipping</div><div class="n">6 agents</div></div>
+      <div class="dept-card fade-in"><span class="icon">◎</span><div class="name">Management</div><div class="n">1 agent</div></div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-cell"><div class="num">5</div><div class="label">Departments</div></div>
+      <div class="stat-cell"><div class="num">22</div><div class="label">Agents</div></div>
+      <div class="stat-cell"><div class="num">1</div><div class="label">Employee</div></div>
+      <div class="stat-cell"><div class="num">0</div><div class="label">Paying customers</div></div>
+    </div>
+
+    <div class="honest-box fade-in">
+      <div class="eyebrow" style="margin-bottom:0;">Honest state, not a pitch exaggeration</div>
+      <p>TRoyMAR is live and functioning — real port-call planning, husbandry coordination, and a cargo &amp; logistics management skill grounded in actual maritime-industry research, not invented capability.</p>
+      <p>Not yet a paying customer. Built to prove the same AI-agent template TRoyAI validated extends cleanly to a second, genuinely different industry.</p>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div class="eyebrow">Closing</div>
+    <h2>Twenty-five years running maritime operations by hand. Now building the version that doesn't need hands at all.</h2>
+    <div class="sign">— I. Ertan Govdeli, Founder &amp; CEO</div>
+    <div class="contact">troymaritime.com · TRoy Group™</div>
+    <a class="cta" href="/">Back to Home →</a>
+  </section>
+
+  <script>
+    var els = document.querySelectorAll('.fade-in');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('shown'); });
+    }, { threshold: 0.15 });
+    els.forEach(function (el) { io.observe(el); });
+  </script>
+</body>
+</html>
