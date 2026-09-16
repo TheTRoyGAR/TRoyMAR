@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Vessels Live — TRoy Maritime Agency™</title>
+<meta name="description" content="Real-time global vessel positions via MarineTraffic live AIS, plus TRoyMAR's coverage map of the world's major straits, canals and ports.">
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #071019;
+  --surface:  #0b1a26;
+  --panel:    #0c1c2b;
+  --border:   #16283a;
+  --border2:  #1e3a52;
+  --accent:   #2fb6c9;
+  --green:    #00e08a;
+  --amber:    #e8b23d;
+  --text:     #e8eef2;
+  --dim:      #7a90a1;
+  --white:    #f2f7fa;
+  --mono:     'Share Tech Mono', monospace;
+  --sans:     'Barlow', sans-serif;
+  --display:  'Bebas Neue', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 9999;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+nav {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border2);
+  background: linear-gradient(90deg, #040a10 0%, #071019 100%);
+  z-index: 100;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; color: var(--accent); text-decoration: none; letter-spacing: 0.02em; }
+.nav-logo img { width: 28px; height: 28px; border-radius: 50%; -webkit-user-drag: none; user-select: none; }
+.nav-logo sup { font-size: 9px; }
+.nav-links { display: flex; align-items: center; gap: 20px; }
+.nav-link { color: var(--dim); font-size: 13px; text-decoration: none; }
+.nav-link:hover { color: var(--text); }
+.nav-link.active { color: var(--accent); }
+
+/* ── TOP STATS BAR ── */
+#statsbar {
+  flex-shrink: 0;
+  height: 44px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 2px;
+  overflow-x: auto;
+}
+.gstat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3px 14px;
+  border-right: 1px solid var(--border);
+  min-width: 76px;
+  flex-shrink: 0;
+}
+.gstat-num { font-family: var(--display); font-size: 18px; line-height: 1; }
+.gstat-label { font-family: var(--mono); font-size: 8px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+.c-cyan { color: var(--accent); } .c-green { color: var(--green); } .c-amber { color: var(--amber); }
+
+.statsbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+  padding-left: 14px;
+}
+.live-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(0,224,138,0.08); border: 1px solid rgba(0,224,138,0.3);
+  border-radius: 20px; padding: 4px 12px;
+  font-family: var(--mono); font-size: 9px; color: var(--green); letter-spacing: 1.5px;
+}
+.blink { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 1.2s infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+.utc-clock { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+
+/* ── REGION TABS ── */
+#regionbar {
+  flex-shrink: 0; height: 34px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: stretch; overflow-x: auto;
+  scrollbar-width: none;
+}
+#regionbar::-webkit-scrollbar { display: none; }
+.rtab {
+  padding: 0 14px; font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--dim); background: none; border: none;
+  border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap;
+  transition: all 0.18s; display: flex; align-items: center; gap: 6px;
+}
+.rtab:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+.rtab.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(47,182,201,0.06); }
+
+/* ── BODY ── */
+#body { flex: 1; display: flex; overflow: hidden; }
+
+#left {
+  width: 270px; flex-shrink: 0; background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.panel-head {
+  padding: 9px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.panel-head-title { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
+.badge-count {
+  background: rgba(47,182,201,0.12); border: 1px solid rgba(47,182,201,0.3);
+  border-radius: 10px; padding: 1px 9px; font-family: var(--mono); font-size: 10px; color: var(--accent);
+}
+
+#locList { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border2) transparent; }
+.loc-group-label {
+  padding: 7px 14px 4px; font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px;
+  color: var(--dim); text-transform: uppercase; background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid var(--border); border-top: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 5;
+}
+.loc-item {
+  padding: 8px 14px; border-bottom: 1px solid rgba(22,40,58,0.6); cursor: pointer;
+  transition: background 0.12s; display: flex; align-items: center; gap: 10px;
+}
+.loc-item:hover { background: rgba(47,182,201,0.05); }
+.loc-item.active { background: rgba(47,182,201,0.09); border-left: 2px solid var(--accent); }
+.loc-icon { font-size: 15px; flex-shrink: 0; }
+.loc-info { flex: 1; min-width: 0; }
+.loc-name { font-family: var(--mono); font-size: 11px; color: var(--white); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.loc-sub { font-size: 10px; color: var(--dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.loc-hub { flex-shrink: 0; font-size: 13px; }
+
+/* ── MAP AREA ── */
+#mapArea { flex: 1; position: relative; background: #050c14; overflow: hidden; }
+#mapFrame { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 1; }
+
+.hud-topleft {
+  position: absolute; top: 12px; left: 12px; z-index: 10;
+  display: flex; flex-direction: column; gap: 8px; pointer-events: none; max-width: 320px;
+}
+.hud-card {
+  background: rgba(7,16,25,0.9); backdrop-filter: blur(16px);
+  border: 1px solid var(--border2); border-radius: 6px; padding: 10px 14px; pointer-events: auto;
+}
+.hud-title { font-family: var(--display); font-size: 19px; letter-spacing: 2px; color: var(--white); line-height: 1; }
+.hud-coords { font-family: var(--mono); font-size: 9px; color: var(--dim); margin-top: 3px; letter-spacing: 0.5px; }
+.hud-fact { margin-top: 6px; font-size: 10.5px; color: var(--text); line-height: 1.4; }
+.hud-stat {
+  margin-top: 6px; font-size: 10px; color: var(--amber); line-height: 1.4;
+  border-top: 1px solid var(--border); padding-top: 6px;
+}
+
+.hud-topright { position: absolute; top: 12px; right: 12px; z-index: 10; display: flex; flex-direction: column; gap: 6px; }
+.status-card {
+  background: rgba(7,16,25,0.9); backdrop-filter: blur(16px);
+  border: 1px solid var(--border2); border-radius: 6px; padding: 8px 14px; text-align: right;
+}
+.status-line { font-family: var(--mono); font-size: 9px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+.status-val { font-family: var(--mono); font-size: 11px; color: var(--green); margin-top: 2px; }
+
+/* Zoom controls */
+.zoom-controls {
+  position: absolute; bottom: 58px; left: 12px; z-index: 20;
+  display: flex; flex-direction: column;
+}
+.zoom-btn {
+  width: 34px; height: 34px; border: 1px solid var(--border2); background: rgba(12,28,43,0.92);
+  color: var(--white); font-size: 17px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+}
+.zoom-btn:first-child { border-radius: 4px 4px 0 0; border-bottom: none; }
+.zoom-btn:last-child { border-radius: 0 0 4px 4px; border-top: none; }
+.zoom-btn:hover { background: rgba(47,182,201,0.15); }
+.zoom-level {
+  width: 34px; height: 30px; border: 1px solid var(--border2); border-top: none; border-bottom: none;
+  background: rgba(12,28,43,0.92); color: var(--accent); font-family: var(--mono); font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Bottom detail bar */
+#detailBar {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
+  background: rgba(7,16,25,0.94); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border2); padding: 9px 16px;
+  display: flex; gap: 22px; align-items: center; flex-wrap: wrap;
+}
+.detail-col { flex: 1; min-width: 110px; }
+.detail-col label {
+  font-family: var(--mono); font-size: 8px; color: var(--dim); letter-spacing: 1.5px;
+  text-transform: uppercase; display: block; margin-bottom: 3px;
+}
+.detail-col .val { font-family: var(--mono); font-size: 11.5px; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Contact float */
+.contact-float { position: absolute; bottom: 58px; right: 12px; z-index: 20; display: flex; flex-direction: column; gap: 8px; }
+.cf-btn {
+  display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 6px; border: 1px solid;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 1px; cursor: pointer; text-decoration: none;
+  transition: all 0.18s; white-space: nowrap;
+}
+.cf-wa { background: rgba(37,211,102,0.1); border-color: rgba(37,211,102,0.35); color: #25d366; }
+.cf-wa:hover { background: rgba(37,211,102,0.2); }
+.cf-mail { background: rgba(47,182,201,0.08); border-color: rgba(47,182,201,0.3); color: var(--accent); }
+.cf-mail:hover { background: rgba(47,182,201,0.15); }
+
+/* Ticker */
+#ticker {
+  flex-shrink: 0; height: 28px; background: rgba(47,182,201,0.04);
+  border-top: 1px solid var(--border2); overflow: hidden; display: flex; align-items: center; z-index: 100;
+}
+.tick-inner { display: flex; animation: scroll 55s linear infinite; white-space: nowrap; }
+.tick-item {
+  padding: 0 26px; font-family: var(--mono); font-size: 10px; color: var(--dim);
+  border-right: 1px solid var(--border); display: inline-flex; align-items: center; gap: 7px; height: 28px;
+}
+.tick-item .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+@media (max-width: 720px) {
+  #left { position: absolute; z-index: 15; height: 100%; transform: translateX(-100%); transition: transform 0.25s; }
+  #left.open { transform: translateX(0); }
+  .hud-topleft { max-width: 220px; }
+  #detailBar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo"><img src="/images/logo.png" alt="TRoyMAR™" draggable="false" />TRoyMAR<sup>™</sup></a>
+  <div class="nav-links">
+    <a class="nav-link" href="/#services">Services</a>
+    <a class="nav-link active" href="/tracker">Track Vessels</a>
+    <a class="nav-link" href="/#how">How It Works</a>
+    <a class="nav-link" href="/story">Our Story</a>
+  </div>
+</nav>
+
+<div id="statsbar">
+  <div class="gstat"><span class="gstat-num c-cyan" id="gTotal">—</span><span class="gstat-label">Locations Mapped</span></div>
+  <div class="gstat"><span class="gstat-num c-amber" id="gChoke">—</span><span class="gstat-label">Straits / Canals</span></div>
+  <div class="gstat"><span class="gstat-num c-green" id="gPorts">—</span><span class="gstat-label">Major Ports</span></div>
+  <div class="gstat"><span class="gstat-num c-cyan">~20%</span><span class="gstat-label">World Oil · Hormuz</span></div>
+  <div class="gstat"><span class="gstat-num c-amber">400+/day</span><span class="gstat-label">Dover Strait</span></div>
+  <div class="gstat"><span class="gstat-num c-green">~14,000/yr</span><span class="gstat-label">Panama Transits</span></div>
+  <div class="statsbar-right">
+    <div class="live-badge"><div class="blink"></div>LIVE AIS MAP</div>
+    <div class="utc-clock" id="clk">00:00:00 UTC</div>
+  </div>
+</div>
+
+<div id="regionbar">
+  <button class="rtab active" onclick="switchRegion('all',this)">🌍 All Regions</button>
+  <button class="rtab" onclick="switchRegion('strategic',this)">⚠️ Strategic Chokepoints</button>
+  <button class="rtab" onclick="switchRegion('mideast',this)">🛢️ Middle East</button>
+  <button class="rtab" onclick="switchRegion('europe',this)">🇪🇺 Europe / Med</button>
+  <button class="rtab" onclick="switchRegion('asia',this)">🌏 Asia / Pacific</button>
+  <button class="rtab" onclick="switchRegion('americas',this)">🌎 Americas</button>
+  <button class="rtab" onclick="switchRegion('africa',this)">🌍 Africa</button>
+  <button class="rtab" onclick="switchRegion('australia',this)">🦘 Australia / Pacific</button>
+</div>
+
+<div id="body">
+  <div id="left">
+    <div class="panel-head">
+      <span class="panel-head-title">Locations</span>
+      <span class="badge-count" id="locCount">—</span>
+    </div>
+    <div id="locList"></div>
+  </div>
+
+  <div id="mapArea">
+    <iframe id="mapFrame" src="" allowfullscreen loading="lazy"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+
+    <div class="zoom-controls">
+      <button class="zoom-btn" id="zoomIn">+</button>
+      <div class="zoom-level" id="zoomLevel">2</div>
+      <button class="zoom-btn" id="zoomOut">−</button>
+    </div>
+
+    <div class="hud-topleft">
+      <div class="hud-card">
+        <div class="hud-title" id="hudTitle">Global View</div>
+        <div class="hud-coords" id="hudCoords">Select a location →</div>
+        <div class="hud-fact" id="hudFact">Click any strait or port on the left to centre the live map there.</div>
+        <div class="hud-stat" id="hudStat" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="hud-topright">
+      <div class="status-card">
+        <div class="status-line">Map Data</div>
+        <div class="status-val">MarineTraffic Live AIS</div>
+      </div>
+      <div class="status-card">
+        <div class="status-line">TRoyMAR Role</div>
+        <div class="status-val" id="hudRole" style="color: var(--accent);">—</div>
+      </div>
+    </div>
+
+    <div class="contact-float">
+      <a class="cf-btn cf-wa" href="https://wa.me/61476496693" target="_blank" rel="noopener">💬 WHATSAPP 24/7</a>
+      <a class="cf-btn cf-mail" href="mailto:troymaritimeagency@gmail.com" target="_blank" rel="noopener">✉️ EMAIL US</a>
+    </div>
+
+    <div id="detailBar">
+      <div class="detail-col"><label>Selected Location</label><div class="val c-cyan" id="dLoc">—</div></div>
+      <div class="detail-col"><label>Region</label><div class="val" id="dRegion">—</div></div>
+      <div class="detail-col"><label>Coordinates</label><div class="val" id="dCoords">—</div></div>
+      <div class="detail-col"><label>Published Statistic</label><div class="val c-amber" id="dStat">—</div></div>
+      <div class="detail-col"><label>TRoyMAR Coverage</label><div class="val" id="dRole" style="color: var(--accent);">—</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="ticker"><div class="tick-inner" id="tickInner"></div></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// DATA — real straits, canals and ports. Every location here genuinely
+// exists at these coordinates. Statistics shown are real, commonly
+// published figures (labelled as such, not implied to be a live count);
+// left blank rather than invented where no reliable figure is known.
+// TRoyMAR's own operational role (hub vs. network) reflects the real
+// business model on troymaritime.com — home hubs at Darwin and Istanbul,
+// everywhere else via the real Hub Agent / sub-agent network model.
+// ══════════════════════════════════════════════════════════════════
+const HUB = 'Home hub — full local agency';
+const NET = 'Hub Agent — sub-agent network';
+
+const locations = [
+  // ─── STRATEGIC CHOKEPOINTS ───
+  { id:'hormuz', group:'Strategic Chokepoints', icon:'🛢️', name:'Strait of Hormuz', sub:'Iran / Oman', region:'Middle East', lat:26.5, lon:56.5, zoom:7, fact:"The world's most important oil chokepoint, linking the Persian Gulf to the Gulf of Oman.", stat:'~20% of global petroleum liquids consumption transits here (EIA).', role:NET },
+  { id:'malacca', group:'Strategic Chokepoints', icon:'🚢', name:'Strait of Malacca', sub:'Malaysia / Indonesia / Singapore', region:'SE Asia', lat:3.0, lon:101.0, zoom:6, fact:"One of the world's busiest and most strategic shipping lanes, linking the Indian Ocean to the Pacific.", stat:'Commonly cited as carrying roughly a quarter of the world’s seaborne trade by volume.', role:NET },
+  { id:'suez', group:'Strategic Chokepoints', icon:'🏜️', name:'Suez Canal', sub:'Egypt', region:'Africa/Med', lat:30.5, lon:32.35, zoom:8, fact:'Connects the Mediterranean Sea to the Red Sea, avoiding the long route around Africa.', stat:'Saves roughly 7,000 nautical miles versus sailing via the Cape of Good Hope.', role:NET },
+  { id:'panama', group:'Strategic Chokepoints', icon:'🌊', name:'Panama Canal', sub:'Panama', region:'Americas', lat:9.08, lon:-79.68, zoom:9, fact:'Connects the Atlantic and Pacific Oceans through the Isthmus of Panama.', stat:'Handles on the order of 13,000–14,000 vessel transits a year (Panama Canal Authority).', role:NET },
+  { id:'dover', group:'Strategic Chokepoints', icon:'🇬🇧', name:'Strait of Dover', sub:'UK / France', region:'Europe', lat:51.0, lon:1.5, zoom:8, fact:"The narrowest point of the English Channel, and one of the busiest shipping lanes on Earth.", stat:'Commonly cited as carrying 400+ vessel movements a day.', role:NET },
+  { id:'bab', group:'Strategic Chokepoints', icon:'🌍', name:'Bab-el-Mandeb', sub:'Yemen / Djibouti', region:'Africa', lat:12.5, lon:43.3, zoom:8, fact:'Gateway between the Red Sea and the Gulf of Aden — the approach route to the Suez Canal from the Indian Ocean.', stat:'', role:NET },
+  { id:'gibraltar', group:'Strategic Chokepoints', icon:'🇬🇮', name:'Strait of Gibraltar', sub:'Spain / Morocco', region:'Europe/Africa', lat:36.0, lon:-5.4, zoom:8, fact:'Gateway between the Atlantic Ocean and the Mediterranean Sea.', stat:'One of the world’s busiest bunkering and transit points.', role:NET },
+  { id:'taiwan', group:'Strategic Chokepoints', icon:'🇹🇼', name:'Taiwan Strait', sub:'China / Taiwan', region:'Asia', lat:24.5, lon:119.5, zoom:7, fact:"One of East Asia's busiest and most closely watched sea lanes.", stat:'', role:NET },
+  { id:'sunda', group:'Strategic Chokepoints', icon:'🇮🇩', name:'Sunda Strait', sub:'Indonesia', region:'SE Asia', lat:-5.9, lon:105.8, zoom:8, fact:'An alternative route to the Strait of Malacca, separating Java and Sumatra.', stat:'', role:NET },
+
+  // ─── TURKISH STRAITS — TRoyMAR HOME WATERS ───
+  { id:'canakkale', group:'Turkish Straits', icon:'⚓', name:'Çanakkale (Dardanelles)', sub:'Turkey — TRoyMAR’s Home Waters', region:'Turkey', lat:40.15, lon:26.4, zoom:9, fact:'Connects the Aegean Sea to the Sea of Marmara — TRoyMAR’s home waters.', stat:'', role:HUB },
+  { id:'istanbul', group:'Turkish Straits', icon:'🕌', name:'Istanbul (Bosphorus)', sub:'Turkey', region:'Turkey', lat:41.1, lon:29.07, zoom:10, fact:'Runs directly through Istanbul, linking the Sea of Marmara to the Black Sea — a key route for Black Sea grain and energy exports.', stat:'', role:HUB },
+
+  // ─── MIDDLE EAST PORTS ───
+  { id:'jebel', group:'Middle East Ports', icon:'🏗️', name:'Jebel Ali (Dubai)', sub:'UAE', region:'Middle East', lat:24.98, lon:55.07, zoom:10, fact:"The largest man-made harbour in the world, and the Middle East's principal container port.", stat:'', role:NET },
+  { id:'fujairah', group:'Middle East Ports', icon:'⛽', name:'Port of Fujairah', sub:'UAE', region:'Middle East', lat:25.12, lon:56.35, zoom:10, fact:'One of the world’s major bunkering hubs, just outside the Strait of Hormuz.', stat:'', role:NET },
+  { id:'khalifa', group:'Middle East Ports', icon:'🇦🇪', name:'Khalifa Port Abu Dhabi', sub:'UAE', region:'Middle East', lat:24.8, lon:54.63, zoom:10, fact:'Abu Dhabi’s deep-water flagship port.', stat:'', role:NET },
+  { id:'dammam', group:'Middle East Ports', icon:'🇸🇦', name:'King Abdulaziz Port', sub:'Saudi Arabia', region:'Middle East', lat:26.46, lon:50.18, zoom:10, fact:'Saudi Arabia’s main Gulf-coast seaport.', stat:'', role:NET },
+  { id:'sohar', group:'Middle East Ports', icon:'🇴🇲', name:'Port of Sohar', sub:'Oman', region:'Middle East', lat:24.35, lon:56.62, zoom:10, fact:'A fast-growing industrial port near the Strait of Hormuz.', stat:'', role:NET },
+
+  // ─── EUROPEAN / MED PORTS ───
+  { id:'rotterdam', group:'European / Med Ports', icon:'🇳🇱', name:'Port of Rotterdam', sub:'Netherlands', region:'Europe', lat:51.95, lon:4.15, zoom:10, fact:'Europe’s largest port by cargo volume.', stat:'', role:NET },
+  { id:'antwerp', group:'European / Med Ports', icon:'🇧🇪', name:'Port of Antwerp-Bruges', sub:'Belgium', region:'Europe', lat:51.26, lon:4.38, zoom:10, fact:'Europe’s second-largest port, and a major chemicals hub.', stat:'', role:NET },
+  { id:'piraeus', group:'European / Med Ports', icon:'🇬🇷', name:'Port of Piraeus', sub:'Greece', region:'Europe', lat:37.93, lon:23.63, zoom:10, fact:'Greece’s largest port and a major Mediterranean container and cruise hub.', stat:'', role:NET },
+  { id:'istanbul_p', group:'European / Med Ports', icon:'🕌', name:'Port of Istanbul (Haydarpaşa)', sub:'Turkey', region:'Turkey', lat:41.0, lon:28.97, zoom:11, fact:'A major passenger and commercial port on Istanbul’s European side.', stat:'', role:HUB },
+  { id:'aliaga', group:'European / Med Ports', icon:'⚓', name:'Port of Aliağa', sub:'Turkey (İzmir)', region:'Turkey', lat:38.8, lon:26.97, zoom:10, fact:'A major petroleum and LNG terminal near İzmir.', stat:'', role:HUB },
+  { id:'marsaxlokk', group:'European / Med Ports', icon:'🇲🇹', name:'Marsaxlokk (Malta)', sub:'Malta', region:'Europe', lat:35.83, lon:14.55, zoom:10, fact:'Malta’s main commercial port and a key Mediterranean bunkering/transshipment hub.', stat:'', role:NET },
+  { id:'barcelona', group:'European / Med Ports', icon:'🇪🇸', name:'Port of Barcelona', sub:'Spain', region:'Europe', lat:41.34, lon:2.16, zoom:10, fact:'One of the Mediterranean’s most important cruise and container ports.', stat:'', role:NET },
+
+  // ─── ASIAN MEGA PORTS ───
+  { id:'singapore', group:'Asian Mega Ports', icon:'🇸🇬', name:'Port of Singapore', sub:'Singapore', region:'SE Asia', lat:1.26, lon:103.82, zoom:9, fact:'One of the world’s busiest ports by shipping tonnage, and a premier global maritime hub.', stat:'', role:NET },
+  { id:'shanghai', group:'Asian Mega Ports', icon:'🇨🇳', name:'Port of Shanghai', sub:'China', region:'Asia', lat:31.23, lon:121.47, zoom:9, fact:'The world’s busiest container port by throughput.', stat:'', role:NET },
+  { id:'busan', group:'Asian Mega Ports', icon:'🇰🇷', name:'Port of Busan', sub:'South Korea', region:'Asia', lat:35.1, lon:129.04, zoom:10, fact:'South Korea’s largest port and a major transshipment hub for Northeast Asia.', stat:'', role:NET },
+  { id:'klang', group:'Asian Mega Ports', icon:'🇲🇾', name:'Port Klang', sub:'Malaysia', region:'SE Asia', lat:2.99, lon:101.38, zoom:10, fact:'Malaysia’s busiest port and a key Strait of Malacca transshipment hub.', stat:'', role:NET },
+  { id:'hongkong', group:'Asian Mega Ports', icon:'🇭🇰', name:'Port of Hong Kong', sub:'China SAR', region:'Asia', lat:22.28, lon:114.17, zoom:10, fact:'One of the world’s busiest deep-water ports, and a gateway for South China trade.', stat:'', role:NET },
+  { id:'colombo', group:'Asian Mega Ports', icon:'🇱🇰', name:'Port of Colombo', sub:'Sri Lanka', region:'Asia', lat:6.93, lon:79.85, zoom:10, fact:'A major transshipment hub on Asia–Europe shipping routes.', stat:'', role:NET },
+
+  // ─── AMERICAS ───
+  { id:'losangeles', group:'Americas Ports', icon:'🇺🇸', name:'Port of LA / Long Beach', sub:'USA — California', region:'Americas', lat:33.73, lon:-118.27, zoom:9, fact:'The busiest port complex in the United States.', stat:'', role:NET },
+  { id:'houston', group:'Americas Ports', icon:'🛢️', name:'Port of Houston', sub:'USA — Texas', region:'Americas', lat:29.73, lon:-95.28, zoom:9, fact:'The leading US port for foreign waterborne tonnage, centred on energy cargo.', stat:'', role:NET },
+  { id:'santos', group:'Americas Ports', icon:'🇧🇷', name:'Port of Santos', sub:'Brazil', region:'Americas', lat:-23.96, lon:-46.33, zoom:9, fact:'The busiest port in Latin America, central to Brazil’s agricultural exports.', stat:'', role:NET },
+  { id:'colon', group:'Americas Ports', icon:'🇵🇦', name:'Colón (Panama Canal Entry)', sub:'Panama — Atlantic side', region:'Americas', lat:9.36, lon:-79.9, zoom:9, fact:'The Atlantic-side entrance to the Panama Canal, with a major free trade zone nearby.', stat:'', role:NET },
+
+  // ─── AFRICA ───
+  { id:'durban', group:'Africa Ports', icon:'🇿🇦', name:'Port of Durban', sub:'South Africa', region:'Africa', lat:-29.86, lon:31.02, zoom:9, fact:'Africa’s busiest container port by volume.', stat:'', role:NET },
+  { id:'tangier', group:'Africa Ports', icon:'🇲🇦', name:'Tanger Med', sub:'Morocco', region:'Africa', lat:35.88, lon:-5.5, zoom:9, fact:'Africa’s largest container port, sited right at the Strait of Gibraltar.', stat:'', role:NET },
+  { id:'djibouti', group:'Africa Ports', icon:'🇩🇯', name:'Port of Djibouti', sub:'Djibouti', region:'Africa', lat:11.59, lon:43.14, zoom:9, fact:'A strategic port at the Bab-el-Mandeb gateway to the Red Sea.', stat:'', role:NET },
+  { id:'mombasa', group:'Africa Ports', icon:'🇰🇪', name:'Port of Mombasa', sub:'Kenya', region:'Africa', lat:-4.05, lon:39.67, zoom:9, fact:'East Africa’s principal gateway port.', stat:'', role:NET },
+
+  // ─── AUSTRALIA & PACIFIC — TRoyMAR HOME HUB ───
+  { id:'darwin', group:'Australia & Pacific', icon:'⚓', name:'Darwin Port', sub:'NT, Australia — TRoyMAR’s Base', region:'Australia', lat:-12.46, lon:130.84, zoom:10, fact:'TRoyMAR’s home port — Northern Australia’s main gateway to Asia.', stat:'', role:HUB },
+  { id:'brisbane', group:'Australia & Pacific', icon:'🇦🇺', name:'Port of Brisbane', sub:'Queensland, Australia', region:'Australia', lat:-27.37, lon:153.17, zoom:9, fact:'Queensland’s principal trade gateway.', stat:'', role:NET },
+  { id:'fremantle', group:'Australia & Pacific', icon:'🇦🇺', name:'Port of Fremantle', sub:'Western Australia', region:'Australia', lat:-32.05, lon:115.74, zoom:9, fact:'Western Australia’s main trade port, and a key iron ore and grain export point.', stat:'', role:NET },
+  { id:'sydney', group:'Australia & Pacific', icon:'🇦🇺', name:'Port of Sydney (Botany)', sub:'NSW, Australia', region:'Australia', lat:-33.97, lon:151.19, zoom:9, fact:'Australia’s main cruise hub and a major container port at Botany Bay.', stat:'', role:NET },
+  { id:'gladstone', group:'Australia & Pacific', icon:'🇦🇺', name:'Port of Gladstone', sub:'Queensland, Australia', region:'Australia', lat:-23.84, lon:151.26, zoom:9, fact:'One of Australia’s largest LNG and coal export terminals.', stat:'', role:NET },
+  { id:'auckland', group:'Australia & Pacific', icon:'🇳🇿', name:'Port of Auckland', sub:'New Zealand', region:'Pacific', lat:-36.84, lon:174.76, zoom:9, fact:'New Zealand’s busiest port.', stat:'', role:NET },
+
+  // ─── OTHER STRAITS ───
+  { id:'magellan', group:'Other Straits', icon:'🌊', name:'Magellan Passage', sub:'Chile / Argentina', region:'Americas', lat:-53.5, lon:-71.0, zoom:6, fact:'A natural alternative to the Cape Horn route, between mainland Chile and Tierra del Fuego.', stat:'', role:NET },
+  { id:'danish', group:'Other Straits', icon:'🇩🇰', name:'Danish Straits (Øresund)', sub:'Denmark / Sweden', region:'Europe', lat:55.9, lon:12.7, zoom:8, fact:'Connects the North Sea to the Baltic Sea — a key route for Baltic and Russian trade.', stat:'', role:NET },
+  { id:'lombok', group:'Other Straits', icon:'🇮🇩', name:'Lombok Strait', sub:'Indonesia', region:'SE Asia', lat:-8.5, lon:115.7, zoom:8, fact:'A deep-water alternative to the Strait of Malacca for the largest tankers and LNG carriers.', stat:'', role:NET },
+  { id:'tsugaru', group:'Other Straits', icon:'🇯🇵', name:'Tsugaru Strait', sub:'Japan', region:'Asia', lat:41.5, lon:141.0, zoom:8, fact:'Separates Honshu and Hokkaido, connecting to the Sea of Japan.', stat:'', role:NET },
+];
+
+const regionFilters = {
+  all:       () => true,
+  strategic: l => ['Strategic Chokepoints','Turkish Straits','Other Straits'].includes(l.group),
+  mideast:   l => l.region === 'Middle East' || l.group === 'Middle East Ports',
+  europe:    l => l.region === 'Europe' || l.region === 'Turkey' || l.group === 'European / Med Ports',
+  asia:      l => ['SE Asia','Asia'].includes(l.region) || l.group === 'Asian Mega Ports',
+  americas:  l => l.region === 'Americas' || l.group === 'Americas Ports',
+  africa:    l => l.region === 'Africa' || l.group === 'Africa Ports',
+  australia: l => l.region === 'Australia' || l.region === 'Pacific' || l.group === 'Australia & Pacific',
+};
+
+let currentRegion = 'all';
+let currentLoc = locations[0];
+let currentZoom = 2;
+
+function renderList(filterKey) {
+  const filtered = locations.filter(regionFilters[filterKey] || (() => true));
+  const groups = {};
+  filtered.forEach(l => { (groups[l.group] ??= []).push(l); });
+
+  let html = '';
+  Object.entries(groups).forEach(([grp, items]) => {
+    html += `<div class="loc-group-label">${grp}</div>`;
+    items.forEach(l => {
+      html += `
+        <div class="loc-item ${l.id === currentLoc.id ? 'active' : ''}" onclick="selectLoc('${l.id}')">
+          <div class="loc-icon">${l.icon}</div>
+          <div class="loc-info">
+            <div class="loc-name">${l.name}</div>
+            <div class="loc-sub">${l.sub}</div>
+          </div>
+          ${l.role === HUB ? '<div class="loc-hub" title="TRoyMAR home hub">⭐</div>' : ''}
+        </div>`;
+    });
+  });
+  document.getElementById('locList').innerHTML = html;
+  document.getElementById('locCount').textContent = filtered.length;
+}
+
+function updateMap(l) {
+  currentZoom = l.zoom;
+  const embedUrl = `https://www.marinetraffic.com/en/ais/embed/zoom:${currentZoom}/centery:${l.lat}/centerx:${l.lon}/maptype:4/shownames:true/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:/remember:false`;
+  document.getElementById('mapFrame').src = embedUrl;
+  document.getElementById('zoomLevel').textContent = currentZoom;
+}
+
+function selectLoc(id) {
+  const l = locations.find(x => x.id === id);
+  if (!l) return;
+  currentLoc = l;
+  updateMap(l);
+
+  document.getElementById('hudTitle').textContent = l.name;
+  document.getElementById('hudCoords').textContent = `${l.sub} · ${Math.abs(l.lat).toFixed(1)}°${l.lat>=0?'N':'S'}, ${Math.abs(l.lon).toFixed(1)}°${l.lon>=0?'E':'W'}`;
+  document.getElementById('hudFact').textContent = l.fact;
+  const statEl = document.getElementById('hudStat');
+  if (l.stat) { statEl.textContent = l.stat; statEl.style.display = 'block'; }
+  else { statEl.style.display = 'none'; }
+  document.getElementById('hudRole').textContent = l.role;
+
+  document.getElementById('dLoc').textContent = l.name;
+  document.getElementById('dRegion').textContent = l.region;
+  document.getElementById('dCoords').textContent = `${l.lat.toFixed(2)}, ${l.lon.toFixed(2)}`;
+  document.getElementById('dStat').textContent = l.stat || 'No published figure cited';
+  document.getElementById('dRole').textContent = l.role;
+
+  renderList(currentRegion);
+}
+
+function switchRegion(key, btn) {
+  currentRegion = key;
+  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList(key);
+}
+
+document.getElementById('zoomIn').addEventListener('click', () => {
+  if (currentZoom < 12) { currentZoom++; document.getElementById('zoomLevel').textContent = currentZoom;
+    const l = currentLoc; document.getElementById('mapFrame').src = `https://www.marinetraffic.com/en/ais/embed/zoom:${currentZoom}/centery:${l.lat}/centerx:${l.lon}/maptype:4/shownames:true/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:/remember:false`; }
+});
+document.getElementById('zoomOut').addEventListener('click', () => {
+  if (currentZoom > 1) { currentZoom--; document.getElementById('zoomLevel').textContent = currentZoom;
+    const l = currentLoc; document.getElementById('mapFrame').src = `https://www.marinetraffic.com/en/ais/embed/zoom:${currentZoom}/centery:${l.lat}/centerx:${l.lon}/maptype:4/shownames:true/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:/remember:false`; }
+});
+
+function tick() {
+  const t = new Date().toUTCString().match(/(\d{2}:\d{2}:\d{2})/)[1];
+  document.getElementById('clk').textContent = t + ' UTC';
+}
+setInterval(tick, 1000); tick();
+
+const msgs = [
+  'TRoyMAR™ — Darwin, Australia & Istanbul, Turkey — troymaritimeagency@gmail.com',
+  'Hub Agent coverage — ' + locations.length + ' straits, canals & major ports mapped',
+  'Home hub specialists: Çanakkale Dardanelles · Istanbul Bosphorus · Darwin Port',
+  'Husbandry · Crew Change · Customs Clearance · Provisions · Ship Repairs',
+  'Real sub-agent network — Mediterranean · Persian Gulf · SE Asia · Australia · Pacific',
+  'Cruise Ships · Tankers · Bulk Carriers · LNG · Container · Yachts — all vessel types',
+  'WhatsApp 24/7 · troymaritimeagency@gmail.com',
+];
+document.getElementById('tickInner').innerHTML = msgs.concat(msgs).map(m =>
+  `<span class="tick-item"><span class="dot"></span>${m}</span>`
+).join('');
+
+document.getElementById('gTotal').textContent = locations.length;
+document.getElementById('gChoke').textContent = locations.filter(regionFilters.strategic).length;
+document.getElementById('gPorts').textContent = locations.filter(l => l.group.includes('Ports')).length;
+
+renderList(currentRegion);
+selectLoc(currentLoc.id);
+</script>
+</body>
+</html>
