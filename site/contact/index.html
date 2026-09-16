@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us | TRoy Maritime Agency&trade;</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <style>
+    :root {
+      --bg: #071019;
+      --bg2: #0c1c2b;
+      --accent: #2fb6c9;
+      --accent2: #e8b23d;
+      --text: #e8eef2;
+      --muted: #7a90a1;
+      --border: #16283a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: "Helvetica Neue", Arial, sans-serif; line-height: 1.7; }
+    nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 22px 48px; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--bg); z-index: 10;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; color: var(--accent); text-decoration: none; }
+    .nav-logo img { width: 32px; height: 32px; border-radius: 50%; }
+    main { max-width: 760px; margin: 0 auto; padding: 64px 24px 100px; }
+    h1 { font-size: 34px; color: var(--accent2); margin-bottom: 8px; }
+    .updated { color: var(--muted); font-size: 13px; margin-bottom: 40px; }
+    h2 { font-size: 20px; color: var(--text); margin: 36px 0 12px; }
+    p, li { color: var(--text); opacity: 0.85; font-size: 15px; margin-bottom: 12px; }
+    ul { padding-left: 22px; }
+    a { color: var(--accent); }
+    strong { color: var(--text); }
+    footer { text-align: center; padding: 40px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); }
+    footer a { color: var(--muted); }
+
+    /* ── TRoyTEL™ widget ── */
+    .ttel-card {
+      margin-top: 32px;
+      background: linear-gradient(135deg, #0c1c2b, #071019);
+      border: 1px solid rgba(47,182,201,0.3);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .ttel-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .ttel-logo { font-size: 17px; font-weight: 700; letter-spacing: 0.5px; color: var(--text); }
+    .ttel-logo span { color: var(--accent); }
+    .ttel-tag { font-size: 10px; color: var(--muted); font-family: monospace; letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--border); border-radius: 10px; padding: 2px 8px; }
+    .ttel-sub { font-size: 14px; color: var(--muted); margin: 10px 0 18px; line-height: 1.5; }
+    .ttel-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+    .ttel-btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 6px;
+      font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit;
+    }
+    .ttel-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .ttel-btn-primary { background: var(--accent); color: #05080d; }
+    .ttel-btn-secondary { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+
+    .ttel-form { display: none; flex-direction: column; gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
+    .ttel-form.open { display: flex; }
+    .ttel-form input, .ttel-form textarea {
+      width: 100%; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border);
+      background: #05080d; color: var(--text); font-size: 13px; font-family: inherit; outline: none; box-sizing: border-box;
+    }
+    .ttel-form input:focus, .ttel-form textarea:focus { border-color: var(--accent); }
+    .ttel-form textarea { resize: vertical; min-height: 90px; }
+    .ttel-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .ttel-fsub { padding: 11px 22px; border-radius: 6px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; background: var(--accent); color: #05080d; align-self: flex-start; }
+    .ttel-fsub:hover { filter: brightness(1.1); }
+    .ttel-note { display: none; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-top: 10px; background: rgba(47,182,201,0.08); border: 1px solid rgba(47,182,201,0.3); color: var(--accent); }
+
+    .ttel-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 9999; align-items: center; justify-content: center; padding: 16px; }
+    .ttel-modal.open { display: flex; }
+    .ttel-modal-inner { background: #05080d; border-radius: 14px; width: 100%; max-width: 760px; overflow: hidden; box-shadow: 0 0 60px rgba(0,0,0,0.7); }
+    .ttel-modal-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: #030507; border-bottom: 1px solid var(--border); }
+    .ttel-modal-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .ttel-modal-close { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1; padding: 0 4px; }
+    .ttel-modal-close:hover { color: #fff; }
+    .ttel-modal iframe { display: block; width: 100%; height: 520px; border: none; }
+
+    @media (max-width: 520px) {
+      .ttel-btn { width: 100%; justify-content: center; }
+      .ttel-btns { flex-direction: column; }
+      .ttel-form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="/"><img src="/images/logo.png" alt="TRoy Maritime Agency&trade;" />TRoy Maritime Agency&trade;</a>
+  </nav>
+  <main>
+    <h1>Contact Us</h1>
+    <p class="updated">Last updated: 1 September 2026</p>
+
+<h2>Get in touch</h2>
+<p>Email: <a href="mailto:troymaritimeagency@gmail.com">troymaritimeagency@gmail.com</a></p>
+<p>Phone: <a href="tel:+61422781807">+61 422 781 807</a></p>
+<p>Based in Darwin, Northern Territory, Australia.</p>
+
+<!-- ═══ TRoyTEL™ — TRoy Group's own comms widget (v1) ═══
+     Video call: real, free, live via Jitsi Meet public infrastructure.
+     Message form: real mailto handoff — honestly labelled as "opens your
+     email app," not a confirmed send (no backend send yet; a real
+     server-side send is a natural next TRoyTEL™ iteration). -->
+<div class="ttel-card" id="troytel">
+  <div class="ttel-head">
+    <span class="ttel-logo"><span>TRoy</span>TEL&trade;</span>
+    <span class="ttel-tag">TRoy Group Comms</span>
+  </div>
+  <p class="ttel-sub">Talk to TRoyMAR&trade; directly — free video call or send a message. No app or download needed.</p>
+  <div class="ttel-btns">
+    <button type="button" class="ttel-btn ttel-btn-primary" onclick="document.getElementById('ttelModal').classList.add('open')">🎥 Start Video Call</button>
+    <button type="button" class="ttel-btn ttel-btn-secondary" onclick="document.getElementById('ttelForm').classList.toggle('open')">✉️ Send a Message</button>
+  </div>
+
+  <form class="ttel-form" id="ttelForm" onsubmit="return ttelSend(event)">
+    <div class="ttel-form-row">
+      <input type="text" name="uname" placeholder="Your name" required>
+      <input type="email" name="uemail" placeholder="Your email" required>
+    </div>
+    <input type="text" name="usubject" placeholder="Subject" required>
+    <input type="text" name="vessel" placeholder="Vessel name & IMO (optional)">
+    <textarea name="umsg" placeholder="Your message..." required></textarea>
+    <button type="submit" class="ttel-fsub">Continue in Email App →</button>
+  </form>
+  <div class="ttel-note" id="ttelNote">✓ Opening your email app with this pre-filled — hit send from there to reach us.</div>
+</div>
+
+<div class="ttel-modal" id="ttelModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="ttel-modal-inner">
+    <div class="ttel-modal-bar">
+      <span class="ttel-modal-title">🎥 TRoyTEL&trade; — Calling TRoy Maritime Agency&trade;, works in your browser</span>
+      <button class="ttel-modal-close" onclick="this.closest('.ttel-modal').classList.remove('open')">✕</button>
+    </div>
+    <iframe src="https://meet.jit.si/TRoyMAR-Ops-Darwin#config.startWithVideoMuted=false&config.startWithAudioMuted=false&config.prejoinPageEnabled=false&config.disableDeepLinking=true&interfaceConfig.SHOW_JITSI_WATERMARK=false"
+      allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>
+  </div>
+</div>
+
+<script>
+function ttelSend(e) {
+  e.preventDefault();
+  var f = document.getElementById('ttelForm');
+  var n = f.uname.value, em = f.uemail.value, s = f.usubject.value, v = f.vessel.value, m = f.umsg.value;
+  var subject = encodeURIComponent('[TRoyTEL™] ' + s);
+  var body = encodeURIComponent('From: ' + n + ' <' + em + '>' + (v ? '\nVessel: ' + v : '') + '\n\n' + m);
+  window.location.href = 'mailto:troymaritimeagency@gmail.com?subject=' + subject + '&body=' + body;
+  document.getElementById('ttelNote').style.display = 'block';
+  return false;
+}
+</script>
+
+  </main>
+  <footer>
+    TRoy Maritime Agency&trade; · <a href="mailto:troymaritimeagency@gmail.com">troymaritimeagency@gmail.com</a><br />
+    ABN 30 302 098 137
+  </footer>
+</body>
+</html>
