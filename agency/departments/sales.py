@@ -1,3 +1,4 @@
+from datetime import date
 from crewai import Agent, Task, Crew, Process
 from agency.core.llm import get_llm
 from agency.core.memory import shared_memory, remember, recall_context
@@ -295,6 +296,8 @@ class SalesDepartment:
         task = Task(
             description=(
                 f"{recall_context(brief)}"
+                f"Today's real date is {date.today().isoformat()} — use this exact date if you state "
+                f"one; never guess or state a different date.\n\n"
                 f"FIND_OPPORTUNITIES: Research real agency-appointment opportunities matching: "
                 f"{brief}\n\nOnly include real, confirmed findings with sources. This is research "
                 "and reporting only — do not draft any outreach."
