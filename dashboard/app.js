@@ -19,21 +19,25 @@ function escapeHtml(str) {
 async function checkStatus() {
   const dot = document.getElementById("status-dot");
   const label = document.getElementById("status-label");
+  const kpi = document.getElementById("uptime");
   try {
     const res = await fetch(`${API}/api/health`, { headers });
     if (res.ok) {
       dot.classList.add("online");
       dot.classList.remove("offline");
       if (label) label.textContent = "Online";
+      if (kpi) kpi.textContent = "Online";
     } else {
       dot.classList.add("offline");
       dot.classList.remove("online");
       if (label) label.textContent = "Offline";
+      if (kpi) kpi.textContent = "Offline";
     }
   } catch {
     dot.classList.add("offline");
     dot.classList.remove("online");
     if (label) label.textContent = "Offline";
+    if (kpi) kpi.textContent = "Offline";
   }
 }
 
